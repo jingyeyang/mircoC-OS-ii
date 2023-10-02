@@ -1,8 +1,8 @@
 ﻿  main.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(109,16): warning C4013: 'malloc' 未定義; 假設 extern 傳回整數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(109,14): warning C4047: '=': 'OS_STK **' 與 'int' 間接取值的層級不同
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(115,21): warning C4047: '=': 'OS_STK *' 與 'int' 間接取值的層級不同
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(123,25): warning C4244: '函式': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(133,25): warning C4244: '函式': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(90,17): warning C4101: 'os_err': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(111,16): warning C4013: 'malloc' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(111,14): warning C4047: '=': 'OS_STK **' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(117,21): warning C4047: '=': 'OS_STK *' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(125,25): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(135,25): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(92,17): warning C4101: 'os_err': unreferenced local variable
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

@@ -28,6 +28,8 @@
 *********************************************************************************************************
 */
 
+
+
 /*
 *********************************************************************************************************
 *                                            INCLUDE FILES
@@ -155,6 +157,13 @@ int  main (void)
 //                  (INT8U *)"Startup Task",
 //                           &os_err);
 //#endif
+
+#ifdef M11102155_HW1
+    printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
+
+#endif /* M11102155_HW1 */
+
+    OSTimeSet(0);
     OSStart();                                                  /* start multitasking (i.e. give control to uc/os-ii)   */
 
     while (DEF_ON) {                                            /* should never get here.                               */
@@ -185,13 +194,14 @@ static void task1(void* p_arg)
     task_date = p_arg;
     while (1)
     {
-        printf("Tick : %d, Hello from task %d\n", OSTime, task_date->TaskID);
+        //printf("Tick : %d, Hello from task %d\n", OSTime, task_date->TaskID);
+        //printf("%d \t task(%d)(%d) \t %d\n", OSTime, task_date->TaskID, OSTCBCur->OSTCBCtxSwCtr, OSCtxSwCtr);
         OSTimeDly(task_date->TaskPeriodic);
-        if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
-        {
-            fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
-            fclose(Output_fp);
-        }
+        //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+        //{
+        //    fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
+        //    fclose(Output_fp);
+        //}
     }
 }
 
@@ -201,13 +211,14 @@ static void task2(void* p_arg)
     task_date = p_arg;
     while (1)
     {
-        printf("Tick : %d, Hello from task %d\n", OSTime, task_date->TaskID);
+        //printf("Tick : %d, Hello from task %d\n", OSTime, task_date->TaskID);
+        //printf("%d \t task(%d)(%d) \t %d\n", OSTime, task_date->TaskID, OSTCBCur->OSTCBCtxSwCtr, OSCtxSwCtr);
         OSTimeDly(task_date->TaskPeriodic);
-        if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
-        {
-            fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
-            fclose(Output_fp);
-        }
+        //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+        //{
+        //    fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
+        //    fclose(Output_fp);
+        //}
     }
 }
 

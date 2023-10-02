@@ -710,10 +710,13 @@ void  OSIntExit (void)
                 OS_SchedNew();
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
                 if (OSPrioHighRdy != OSPrioCur) {          /* No Ctx Sw if current task is highest rdy */
+
+#ifndef M11102155_HW1
 #if OS_TASK_PROFILE_EN > 0u
                     OSTCBHighRdy->OSTCBCtxSwCtr++;         /* Inc. # of context switches to this task  */
 #endif
                     OSCtxSwCtr++;                          /* Keep track of the number of ctx switches */
+#endif /* M11102155_HW1 */
 
 #if OS_TASK_CREATE_EXT_EN > 0u
 #if defined(OS_TLS_TBL_SIZE) && (OS_TLS_TBL_SIZE > 0u)
@@ -721,6 +724,13 @@ void  OSIntExit (void)
 #endif
 #endif
                     OS_TRACE_ISR_EXIT_TO_SCHEDULER();
+
+#ifdef M11102155_HW1
+                    // Cause the only interrupt here is time up such that idle task is interrupt by timetick
+                    printf("%2d\t task(%2d)       \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, 63, OSTCBHighRdy -> OSTCBId, OSTCBHighRdy -> OSTCBCtxSwCtr, OSCtxSwCtr);
+                    fprintf(Output_fp, "%2d\t task(%2d)       \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                    OSCtxSwCtr++;
+#endif /* M11102155_HW1 */
 
                     OSIntCtxSw();                          /* Perform interrupt level ctx switch       */
                 } else {
@@ -874,8 +884,20 @@ void  OSStart (void)
         OS_SchedNew();                               /* Find highest priority's task priority number   */
         OSPrioCur     = OSPrioHighRdy;
         OSTCBHighRdy  = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
+
+#ifdef M11102155_HW1
+        // Open the Output file.
+        if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) != 0)
+        {
+            printf("Error :: Output File Open Error !!! ");
+            exit(0);
+        }
+        printf("%2d\t ***********   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBHighRdy-> OSTCBId, OSTCBHighRdy-> OSTCBCtxSwCtr, OSCtxSwCtr);
+        fprintf(Output_fp, "%2d\t ***********   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+#endif /* M11102155_HW1 */
+
         OSTCBCur      = OSTCBHighRdy;
-        OSStartHighRdy();                            /* Execute target specific code to start task     */
+        OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u      
     }
 }
 
@@ -961,6 +983,10 @@ void  OSTimeTick (void)
         /* Setting the end time for the OS */
         if (OSTimeGet() > SYSTEM_END_TIME)
         {
+#ifdef M11102155_HW1
+            // Close the output file.
+            fclose(Output_fp);
+#endif /* M11102155_HW1 */
             OSRunning = OS_FALSE;
             exit(0);
         }
@@ -1721,16 +1747,35 @@ void  OS_Sched (void)
             OS_SchedNew();
             OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
             if (OSPrioHighRdy != OSPrioCur) {          /* No Ctx Sw if current task is highest rdy     */
+#ifndef M11102155_HW1
 #if OS_TASK_PROFILE_EN > 0u
                 OSTCBHighRdy->OSTCBCtxSwCtr++;         /* Inc. # of context switches to this task      */
 #endif
+
                 OSCtxSwCtr++;                          /* Increment context switch counter             */
+#endif /* M11102155_HW1 */
 
 #if OS_TASK_CREATE_EXT_EN > 0u
 #if defined(OS_TLS_TBL_SIZE) && (OS_TLS_TBL_SIZE > 0u)
                 OS_TLS_TaskSw();
 #endif
 #endif
+
+#ifdef M11102155_HW1
+                if (OSTCBHighRdy->OSTCBPrio == 63)
+                {
+                    printf("%2d\t task(%2d)(%2d)   \t\t task(%2d)    \t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, 63, OSCtxSwCtr);
+                    fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)    \t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, 63, OSCtxSwCtr);
+                }
+                else
+                {
+                    printf("%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                    fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                }
+                OSTCBCur->OSTCBCtxSwCtr++; // After print the info then do ++ on the previous task, means the task that will swap out.
+                OSCtxSwCtr++;
+                //printf("%2d\t task(%2d)(%2d)   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+#endif /* M11102155_HW1 */
 
                 OS_TASK_SW();                          /* Perform a context switch                     */
             }
