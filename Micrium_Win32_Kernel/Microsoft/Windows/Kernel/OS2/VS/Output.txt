@@ -16,18 +16,3 @@
 15	 task(63)       		 task( 1)( 5)		 14
 15	 task( 1)( 5)   		 task( 2)( 3)		 15
 15	 task( 2)( 3)   		 task(63)    		 16
-18	 task(63)       		 task( 1)( 6)		 17
-18	 task( 1)( 6)   		 task(63)    		 18
-20	 task(63)       		 task( 2)( 4)		 19
-20	 task( 2)( 4)   		 task(63)    		 20
-21	 task(63)       		 task( 1)( 7)		 21
-21	 task( 1)( 7)   		 task(63)    		 22
-24	 task(63)       		 task( 1)( 8)		 23
-24	 task( 1)( 8)   		 task(63)    		 24
-25	 task(63)       		 task( 2)( 5)		 25
-25	 task( 2)( 5)   		 task(63)    		 26
-27	 task(63)       		 task( 1)( 9)		 27
-27	 task( 1)( 9)   		 task(63)    		 28
-30	 task(63)       		 task( 1)(10)		 29
-30	 task( 1)(10)   		 task( 2)( 6)		 30
-30	 task( 2)( 6)   		 task(63)    		 31

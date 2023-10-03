@@ -131,6 +131,14 @@ void InputFile()
     char* ptr;
     char* pTmp = NULL;
     int TaskInfo[INFO], i, j = 0;
+
+#ifdef M11102155_HW1
+
+    int priority_count = 1;
+
+#endif /* M11102155_HW1 */
+
+
     TASK_NUMBER = 0;
 
     while (!feof(fp))
@@ -165,8 +173,18 @@ void InputFile()
             i++;
         }
 
+#ifndef M11102155_HW1
+
         /* Initial Priority */
         TaskParameter[j].TaskPriority = j;
+
+#elif defined M11102155_HW1
+
+        TaskParameter[j].TaskPriority = priority_count;
+        priority_count++;
+
+#endif /* M11102155_HW1 */
+
         j++;
     }
     fclose(fp);
