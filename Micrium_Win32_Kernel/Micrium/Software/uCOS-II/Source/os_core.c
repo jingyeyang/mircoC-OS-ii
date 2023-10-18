@@ -896,6 +896,34 @@ void  OSStart (void)
         fprintf(Output_fp, "%2d\t ***********   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
 #endif /* M11102155_HW1 */
 
+
+#ifdef M11102155_PA1_PART_1
+
+        OS_TCB* ptcb = OSTCBList;
+        
+        printf("================TCB linked list================\n");
+        printf("TASK    Prev_TCB_addr   TCB_addr   Next_TCB_addr\n");
+        while (ptcb != (OS_TCB*)0)
+        {
+            if (ptcb->OSTCBPrio == 63)
+            {
+                printf("%2d          %6x        %6x        %6x\n", ptcb->OSTCBPrio, ptcb->OSTCBPrev, ptcb, ptcb->OSTCBNext);
+            }
+            else
+            {
+                printf("%2d          %6x        %6x        %6x\n", ptcb->OSTCBId, ptcb->OSTCBPrev, ptcb, ptcb->OSTCBNext);
+            }
+            ptcb = ptcb->OSTCBNext;
+        }
+
+#endif /* M11102155_PA1_PART_1 */ 
+
+
+
+
+
+
+
         OSTCBCur      = OSTCBHighRdy;
         OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u      
     }
@@ -2172,6 +2200,22 @@ INT8U  OS_TCBInit (INT8U    prio,
 #endif
 
         OS_ENTER_CRITICAL();
+
+
+#ifdef M11102155_PA1_PART_1
+        if (ptcb->OSTCBPrio == 63)
+        {
+            printf("Task[%3d] created, TCB Address %6x\n", ptcb->OSTCBPrio, ptcb);
+            printf("------After TCB[%3d] degin linked------\n", ptcb->OSTCBPrio);
+        }
+        else
+        {
+            printf("Task[%3d] created, TCB Address %6x\n", ptcb->OSTCBId, ptcb);
+            printf("------After TCB[%3d] degin linked------\n", ptcb->OSTCBId);
+        }
+#endif /* M11102155_PA1_PART_1 */
+
+
         ptcb->OSTCBNext = OSTCBList;                       /* Link into TCB chain                      */
         ptcb->OSTCBPrev = (OS_TCB *)0;
         if (OSTCBList != (OS_TCB *)0) {
@@ -2181,6 +2225,17 @@ INT8U  OS_TCBInit (INT8U    prio,
         OSRdyGrp               |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
         OSTaskCtr++;                                       /* Increment the #tasks counter             */
+
+
+#ifdef M11102155_PA1_PART_1      
+        printf("Previos TCB point to address %6x\n", ptcb->OSTCBPrev);
+        printf("Current TCB point to address %6x\n", ptcb);
+        printf("Next    TCB point to address %6x\n\n", ptcb->OSTCBNext);
+#endif /* M11102155_PA1_PART_1 */
+
+
+
+
         OS_TRACE_TASK_READY(ptcb);
         OS_EXIT_CRITICAL();
         return (OS_ERR_NONE);

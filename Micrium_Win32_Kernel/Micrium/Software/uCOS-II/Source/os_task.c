@@ -382,8 +382,8 @@ INT8U  OSTaskCreateExt (void   (*task)(void *p_arg),
         return (OS_ERR_TASK_CREATE_ISR);
     }
     if (OSTCBPrioTbl[prio] == (OS_TCB *)0) { /* Make sure task doesn't already exist at this priority  */
-        OSTCBPrioTbl[prio] = OS_TCB_RESERVED;/* Reserve the priority to prevent others from doing ...  */
-                                             /* ... the same thing until task is created.              */
+        OSTCBPrioTbl[prio] = OS_TCB_RESERVED;/* Reserve the priority to prevent others from doing ...  */   // OS_TCB_RESERVED ((OS_TCB*)1) : to quick reserve the priority and leave critical section
+                                             /* ... the same thing until task is created.              */   //                                we will set priority until OS_TCBInit().    
         OS_EXIT_CRITICAL();
 
 #if (OS_TASK_STAT_STK_CHK_EN > 0u)

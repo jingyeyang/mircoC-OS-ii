@@ -160,8 +160,8 @@ int  main (void)
 
 #ifdef M11102155_HW1
     printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
-
 #endif /* M11102155_HW1 */
+
 
     OSTimeSet(0);
     OSStart();                                                  /* start multitasking (i.e. give control to uc/os-ii)   */

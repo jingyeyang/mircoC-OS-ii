@@ -32,8 +32,8 @@
 #ifndef   OS_uCOS_II_H
 #define   OS_uCOS_II_H
 
-#define M11102155_HW1
-//#define M11102155_PA1_PART_1
+//#define M11102155_HW1
+#define M11102155_PA1_PART_1
 //#define M11102155_PA1_PART_2_RM
 //#define M11102155_PA1_PART_3_FIFO
 

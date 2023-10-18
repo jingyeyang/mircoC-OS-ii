@@ -623,7 +623,11 @@ void  OSTCBInitHook (OS_TCB  *p_tcb)
     }
 
 #if (OS_MSG_TRACE > 0u)
+ 
+#ifndef M11102155_PA1_PART_1
     OS_Printf("Task[%3.1d] created, Thread ID %5.0d\n", p_tcb->OSTCBPrio, p_stk->ThreadID);
+#endif /* M11102155_PA1_PART_1 */
+
 #endif
 
     p_stk->TaskState = STATE_CREATED;
