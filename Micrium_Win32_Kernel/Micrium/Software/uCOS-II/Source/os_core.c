@@ -2093,7 +2093,8 @@ INT8U  OS_TCBInit (INT8U    prio,
                    INT16U   id,
                    INT32U   stk_size,
                    void    *pext,
-                   INT16U   opt)
+                   INT16U   opt,
+                   void*   p_arg)
 {
     OS_TCB    *ptcb;
 #if OS_CRITICAL_METHOD == 3u                               /* Allocate storage for CPU status register */
@@ -2107,6 +2108,15 @@ INT8U  OS_TCBInit (INT8U    prio,
     INT8U      j;
 #endif
 #endif
+
+#ifdef M11102155_PA1_PART_2_RM
+    task_para_set* task_parameter = (task_para_set*)p_arg;
+    if (p_arg != 0)      // (void*) p_arg == 0 : Idle task.
+    {
+        printf("Task ID = %2d,  arr_time = %2d,  exe_time = %2d,  period_time = %2d,   prio = %2d\n", task_parameter ->TaskID, task_parameter ->TaskArriveTime, task_parameter->TaskExecutionTime, task_parameter->TaskPeriodic, task_parameter->TaskPriority);
+    }
+#endif /* M11102155_PA1_PART_2_RM */
+
 
 
     OS_ENTER_CRITICAL();
@@ -2198,6 +2208,26 @@ INT8U  OS_TCBInit (INT8U    prio,
         OS_TLS_TaskCreate(ptcb);                           /* Call TLS hook                            */
 #endif
 #endif
+
+#ifdef M11102155_PA1_PART_2_RM
+
+        INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
+        INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
+        INT16U total_execute_time;            // Records the worst-case execution time of the task.
+        INT16U arrive_time;                   // Records the arrival time of the task at time j.
+        INT16U deadline_time;                 // Records the deadline of the task at time j.
+
+        if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
+        {
+            ptcb->num_times_job = 0;
+            ptcb->num_recent_execute_time = 0;
+            ptcb->total_execute_time = task_parameter->TaskExecutionTime;
+            ptcb->arrive_time = task_parameter->TaskArriveTime;
+            ptcb->period = task_parameter->TaskPeriodic;
+            ptcb->deadline_time = (ptcb->arrive_time) + (ptcb->period);
+        }
+#endif /* M11102155_PA1_PART_2_RM */     
+
 
         OS_ENTER_CRITICAL();
 

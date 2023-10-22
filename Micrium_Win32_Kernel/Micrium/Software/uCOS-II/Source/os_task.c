@@ -253,7 +253,7 @@ INT8U  OSTaskCreate (void   (*task)(void *p_arg),
                                              /* ... the same thing until task is created.              */
         OS_EXIT_CRITICAL();
         psp = OSTaskStkInit(task, p_arg, ptos, 0u);             /* Initialize the task's stack         */
-        err = OS_TCBInit(prio, psp, (OS_STK *)0, 0u, 0u, (void *)0, 0u);
+        err = OS_TCBInit(prio, psp, (OS_STK *)0, 0u, 0u, (void *)0, 0u, p_arg);
         if (err == OS_ERR_NONE) {
             OS_TRACE_TASK_CREATE(OSTCBPrioTbl[prio]);
             if (OSRunning == OS_TRUE) {      /* Find highest priority task if multitasking has started */
@@ -391,7 +391,7 @@ INT8U  OSTaskCreateExt (void   (*task)(void *p_arg),
 #endif
 
         psp = OSTaskStkInit(task, p_arg, ptos, opt);           /* Initialize the task's stack          */
-        err = OS_TCBInit(prio, psp, pbos, id, stk_size, pext, opt);
+        err = OS_TCBInit(prio, psp, pbos, id, stk_size, pext, opt, p_arg);
         if (err == OS_ERR_NONE) {
             OS_TRACE_TASK_CREATE(OSTCBPrioTbl[prio]);
             if (OSRunning == OS_TRUE) {                        /* Find HPT if multitasking has started */

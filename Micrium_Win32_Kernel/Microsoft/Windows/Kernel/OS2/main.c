@@ -66,8 +66,15 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 *********************************************************************************************************
 */
 
+#ifdef M11102155_PA1_PART_2_RM
+static void task(void* p_arg);
+#endif /* M11102155_PA1_PART_2_RM */
+
+#ifdef M11102155_PA1_PART_1
 static void task1(void* p_arg);
 static void task2(void* p_arg);
+#endif /* M11102155_PA1_PART_1 */
+
 static  void  StartupTask (void  *p_arg);
 
 
@@ -118,6 +125,9 @@ int  main (void)
     }
 
 
+
+#ifdef M11102155_PA1_PART_1
+
     /* Create Task Set */
     OSTaskCreateExt(task1,
         &TaskParameter[0],
@@ -128,7 +138,7 @@ int  main (void)
         TASK_STAKSIZE,
         &TaskParameter[0],
         (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
-    
+
     OSTaskCreateExt(task2,
         &TaskParameter[1],
         &Task_STK[1][TASK_STAKSIZE - 1],
@@ -139,6 +149,25 @@ int  main (void)
         &TaskParameter[0],
         (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
 
+#endif // M11102155_PA1_PART_1
+
+
+#ifdef M11102155_PA1_PART_2_RM
+
+    for (n = 0; n < TASK_NUMBER; n++)
+    {
+        OSTaskCreateExt(task,
+            &TaskParameter[n],
+            &Task_STK[n][TASK_STAKSIZE - 1],
+            TaskParameter[n].TaskPriority,
+            TaskParameter[n].TaskID,
+            &Task_STK[n][0],
+            TASK_STAKSIZE,
+            &TaskParameter[0],
+            (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
+    }
+
+#endif // M11102155_PA1_PART_2_RM
 
  
 
@@ -188,6 +217,47 @@ int  main (void)
 *********************************************************************************************************
 */
 
+#ifdef M11102155_PA1_PART_2_RM
+
+static void task(void* p_arg)
+{
+    task_para_set* task_date;
+    task_date = p_arg;
+    int task_tick_count = 0;
+    int arrive_count = 0;       // record the times this task execute
+    while (1)
+    {
+        arrive_count++;
+        //task_tick_count = 0;
+        //while(OSTime < ()
+
+
+
+        printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date -> TaskPriority, task_date -> TaskPeriodic, (OSTime + task_date -> TaskPeriodic));
+        //printf("Tick : %2d   task(%2d)(%2d), prio = %d and delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, arrive_count, task_date->TaskPriority, task_date->TaskPeriodic, (OSTime + task_date->TaskPeriodic));
+        //printf("%d \t task(%d)(%d) \t %d\n", OSTime, task_date->TaskID, OSTCBCur->OSTCBCtxSwCtr, OSCtxSwCtr);
+
+
+
+
+
+
+
+        OSTimeDly(task_date->TaskPeriodic);
+        //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
+        //{
+        //    fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
+        //    fclose(Output_fp);
+        //}
+    }
+}
+
+#endif /* M11102155_PA1_PART_2_RM */
+
+
+
+
+#ifdef M11102155_PA1_PART_1
 static void task1(void* p_arg)
 {
     task_para_set* task_date;
@@ -221,6 +291,7 @@ static void task2(void* p_arg)
         //}
     }
 }
+#endif /* M11102155_PA1_PART_1 */
 
 
 static  void  StartupTask (void *p_arg)

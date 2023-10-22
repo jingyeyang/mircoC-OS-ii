@@ -33,8 +33,8 @@
 #define   OS_uCOS_II_H
 
 //#define M11102155_HW1
-#define M11102155_PA1_PART_1
-//#define M11102155_PA1_PART_2_RM
+//#define M11102155_PA1_PART_1
+#define M11102155_PA1_PART_2_RM
 //#define M11102155_PA1_PART_3_FIFO
 
 #ifdef __cplusplus
@@ -73,7 +73,15 @@ extern "C" {
 
 /* Input File */
 FILE* fp;
+
+#ifdef M11102155_PA1_PART_2_RM
+#define INPUT_FILE_NAME "./RM/Task Set 2/TaskSet.txt"
+#endif /* M11102155_PA1_PART_2_RM */
+
+#ifdef M11102155_PA1_PART_1
 #define INPUT_FILE_NAME "./TaskSet.txt"
+#endif /* M11102155_PA1_PART_1 */
+
 #define OUTPUT_FILE_NAME "./Output.txt"
 #define MAX 20      // Task maximum number
 #define INFO 4      // information of task
@@ -678,6 +686,43 @@ typedef struct os_tcb {
 #if OS_TASK_REG_TBL_SIZE > 0u
     INT32U           OSTCBRegTbl[OS_TASK_REG_TBL_SIZE];
 #endif
+
+#ifdef M11102155_PA1_PART_2_RM
+
+    INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
+    INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
+    INT16U total_execute_time;            // Records the worst-case execution time of the task.
+    INT16U arrive_time;                   // Records the arrival time of the task at time j.
+    INT16U period;                        // Record period of the task.
+    INT16U deadline_time;                 // Records the deadline of the task at time j.
+
+    /*
+        - e.g. : task 5's execution time is 3 ticks and occur periodically for every 8 ticks, ask the recod of third time task 5 occur.
+            - num_times_job           =  3 (third time occur)
+            - num_recent_execute_time =  0 (havn't execute yet)
+            - total_execute_time      =  3 (worst total execute time)
+            - arrive_time             = 24 (task 5's third time arrive time is at tick 24)
+            - deadline_time           = 32 (task 5's forth time arrive time is at tick 24 + 8 = 32)
+        
+        - assume after task execute 2 ticks and preemtive by other HPT
+            - num_times_job           =  3 (third time occur)
+            - num_recent_execute_time =  2 (execute 2 ticks)
+            - total_execute_time      =  3 (worst total execute time)
+            - arrive_time             = 24 (task 5's third time arrive time is at tick 24)
+            - deadline_time           = 32 (task 5's forth time arrive time is at tick 24 + 8 = 32)
+    
+        - So, use upper record to check whether the task is violate(overflow) or not.
+            - consider the remain execution time plus current is larger than deadline time or not !!!
+               - remain_execution_time = (total_execute_time) - (num_recent_execute_time)
+               - consider " OSTick + remain_execution_time > deadline_time ? "
+    
+    */
+
+#endif /* M11102155_PA1_PART_2_RM */
+
+
+
+
 } OS_TCB;
 
 
@@ -1425,7 +1470,8 @@ INT8U         OS_TCBInit              (INT8U            prio,
                                        INT16U           id,
                                        INT32U           stk_size,
                                        void            *pext,
-                                       INT16U           opt);
+                                       INT16U           opt,
+                                       void*            p_arg);
 
 #if OS_TMR_EN > 0u
 void          OSTmr_Init              (void);

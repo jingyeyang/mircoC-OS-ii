@@ -624,7 +624,7 @@ void  OSTCBInitHook (OS_TCB  *p_tcb)
 
 #if (OS_MSG_TRACE > 0u)
  
-#ifndef M11102155_PA1_PART_1
+#ifdef M11102155_PA1_PART_1 | defined(M11102155_PA1_PART_2_RM)
     OS_Printf("Task[%3.1d] created, Thread ID %5.0d\n", p_tcb->OSTCBPrio, p_stk->ThreadID);
 #endif /* M11102155_PA1_PART_1 */
 
