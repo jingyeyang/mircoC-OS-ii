@@ -691,7 +691,7 @@ void  OSIntEnter (void)
 *              2) Rescheduling is prevented when the scheduler is locked (see OS_SchedLock())
 *********************************************************************************************************
 */
-
+// Interrupt (Kernel) level scheduling ::
 void  OSIntExit (void)
 {
 #if OS_CRITICAL_METHOD == 3u                               /* Allocate storage for CPU status register */
@@ -919,9 +919,9 @@ void  OSStart (void)
 #endif /* M11102155_PA1_PART_1 */ 
 
 
-
-
-
+#ifdef M11102155_PA1_PART_2_RM
+        OS_PREVIOUS_TIME = OSTime;
+#endif /* M11102155_PA1_PART_2_RM */
 
 
         OSTCBCur      = OSTCBHighRdy;
@@ -1761,13 +1761,16 @@ void  OS_MemCopy (INT8U  *pdest,
 *********************************************************************************************************
 */
 
+// Task level scheduling ::
 void  OS_Sched (void)
 {
 #if OS_CRITICAL_METHOD == 3u                           /* Allocate storage for CPU status register     */
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-
+#ifdef M11102155_PA1_PART_2_RM
+    OS_PREVIOUS_TIME = OSTime;
+#endif /* M11102155_PA1_PART_2_RM */
 
     OS_ENTER_CRITICAL();
     if (OSIntNesting == 0u) {                          /* Schedule only if all ISRs done and ...       */
@@ -2128,7 +2131,24 @@ INT8U  OS_TCBInit (INT8U    prio,
         ptcb->OSTCBPrio          = prio;                   /* Load task priority into TCB              */
         ptcb->OSTCBStat          = OS_STAT_RDY;            /* Task is ready to run                     */
         ptcb->OSTCBStatPend      = OS_STAT_PEND_OK;        /* Clear pend status                        */
+
+
+#ifndef M11102155_PA1_PART_2_RM
         ptcb->OSTCBDly           = 0u;                     /* Task is not delayed                      */
+#else 
+        if (p_arg != 0)
+        {
+            //ptcb->OSTCBStat = OS_STAT_SUSPEND;
+            ptcb->OSTCBDly = (INT32U)(task_parameter->TaskArriveTime);    // Cuase task have arrive time, we set the task delay #arrive time to meet the task's arrive time.
+            //printf("TASK %d delay init %d\n", task_parameter->TaskID, task_parameter->TaskArriveTime);
+        }
+        else
+        {
+            ptcb->OSTCBDly = 0u;
+        }
+#endif /* M11102155_PA1_PART_2_RM */
+
+
 
 #if OS_TASK_CREATE_EXT_EN > 0u
         ptcb->OSTCBExtPtr        = pext;                   /* Store pointer to TCB extension           */
@@ -2219,8 +2239,8 @@ INT8U  OS_TCBInit (INT8U    prio,
 
         if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
         {
-            ptcb->num_times_job = 0;
-            ptcb->num_recent_execute_time = 0;
+            ptcb->num_times_job = 0u;
+            ptcb->num_recent_execute_time = 0u;
             ptcb->total_execute_time = task_parameter->TaskExecutionTime;
             ptcb->arrive_time = task_parameter->TaskArriveTime;
             ptcb->period = task_parameter->TaskPeriodic;
@@ -2245,15 +2265,39 @@ INT8U  OS_TCBInit (INT8U    prio,
         }
 #endif /* M11102155_PA1_PART_1 */
 
-
         ptcb->OSTCBNext = OSTCBList;                       /* Link into TCB chain                      */
         ptcb->OSTCBPrev = (OS_TCB *)0;
         if (OSTCBList != (OS_TCB *)0) {
             OSTCBList->OSTCBPrev = ptcb;
         }
         OSTCBList               = ptcb;
-        OSRdyGrp               |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
+
+#ifndef M11102155_PA1_PART_2_RM
+
+        OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+
+#else
+        if (p_arg != 0)
+        {
+            if (task_parameter->TaskArriveTime == 0)
+            {
+                OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
+                OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+            }
+        }
+        else
+        {
+            OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
+            OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+        }
+
+
+
+#endif /* M11102155_PA1_PART_2_RM */
+
+        
+        
         OSTaskCtr++;                                       /* Increment the #tasks counter             */
 
 

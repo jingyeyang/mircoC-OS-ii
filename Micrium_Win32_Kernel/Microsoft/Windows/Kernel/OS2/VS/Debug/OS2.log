@@ -4,4 +4,6 @@ C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(124,21): warning C4047: '=': 'OS_STK *' differs in levels of indirection from 'int'
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(162,29): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(244,23): warning C4018: '<': signed/unsigned mismatch
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(238,13): warning C4101: 'previous_os_time': unreferenced local variable
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

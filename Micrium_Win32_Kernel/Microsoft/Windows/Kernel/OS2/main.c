@@ -231,9 +231,46 @@ static void task(void* p_arg)
         //task_tick_count = 0;
         //while(OSTime < ()
 
+        OSTCBCur->num_recent_execute_time = 0;
+        OSTCBCur->num_times_job++;
 
 
-        printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date -> TaskPriority, task_date -> TaskPeriodic, (OSTime + task_date -> TaskPeriodic));
+        int previous_os_time;
+
+        int end_os_time = OSTime + OSTCBCur->total_execute_time;
+        //printf("Tick : %d, Task %d \n", OSTime, task_date->TaskID);
+
+        // For every task's tick : 
+        while (OSTime < end_os_time)
+        {
+            //printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date->TaskPriority, task_date->TaskPeriodic, (OSTime + task_date->TaskPeriodic));
+            //printf("Tick : %d, Task %d \n", OSTime, task_date->TaskID);
+            
+            //printf("OSTime = %d ........... task %d\n", OSTime, task_date ->TaskID);
+
+
+            // For every tick do nothing.
+            while (1)
+            {
+                if (OSTime != OS_PREVIOUS_TIME)
+                {
+                    //OS_PREVIOUS_TIME = OSTime;
+                    break;
+                }
+            }
+
+
+            printf("Tick : %d, Task %d \n", OS_PREVIOUS_TIME, task_date->TaskID);
+            OS_PREVIOUS_TIME = OSTime;
+            OSTCBCur->num_recent_execute_time++;
+            end_os_time = OSTime + (OSTCBCur -> total_execute_time - OSTCBCur -> num_recent_execute_time);
+        }
+
+
+        
+
+
+        //printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date -> TaskPriority, task_date -> TaskPeriodic, (OSTime + task_date -> TaskPeriodic));
         //printf("Tick : %2d   task(%2d)(%2d), prio = %d and delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, arrive_count, task_date->TaskPriority, task_date->TaskPeriodic, (OSTime + task_date->TaskPeriodic));
         //printf("%d \t task(%d)(%d) \t %d\n", OSTime, task_date->TaskID, OSTCBCur->OSTCBCtxSwCtr, OSCtxSwCtr);
 
@@ -244,6 +281,11 @@ static void task(void* p_arg)
 
 
         OSTimeDly(task_date->TaskPeriodic);
+
+
+
+
+
         //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
         //{
         //    fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);

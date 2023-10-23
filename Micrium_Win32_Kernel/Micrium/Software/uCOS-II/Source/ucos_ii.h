@@ -69,7 +69,7 @@ extern "C" {
 */
 
 /* End time for the simulation */
-#define SYSTEM_END_TIME 30
+#define SYSTEM_END_TIME 100
 
 /* Input File */
 FILE* fp;
@@ -112,6 +112,10 @@ OS_STK** Task_STK;
 
 /* Create Task */
 task_para_set TaskParameter[OS_MAX_TASKS];
+
+
+// Record OS previous time
+INT32U OS_PREVIOUS_TIME;
 
 
 #ifdef   OS_GLOBALS
@@ -695,6 +699,8 @@ typedef struct os_tcb {
     INT16U arrive_time;                   // Records the arrival time of the task at time j.
     INT16U period;                        // Record period of the task.
     INT16U deadline_time;                 // Records the deadline of the task at time j.
+
+    INT32U previous_os_time;              // Record the last of OSTime that task be interrupt or delay.
 
     /*
         - e.g. : task 5's execution time is 3 ticks and occur periodically for every 8 ticks, ask the recod of third time task 5 occur.

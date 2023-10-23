@@ -1178,7 +1178,7 @@ static  DWORD  WINAPI  OSTickW32 (LPVOID  p_arg)
 
                  suspended = OSIntCurTaskSuspend();
                  if (suspended == DEF_TRUE) {
-                     OSIntEnter();
+                     OSIntEnter();                                  // Interrupt of OSTimeTick !!!
                      OSTimeTick();
                      OSIntExit();
                      OSIntCurTaskResume();
