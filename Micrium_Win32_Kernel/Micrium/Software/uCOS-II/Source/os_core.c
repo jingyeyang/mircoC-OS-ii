@@ -919,9 +919,7 @@ void  OSStart (void)
 #endif /* M11102155_PA1_PART_1 */ 
 
 
-#ifdef M11102155_PA1_PART_2_RM
-        OS_PREVIOUS_TIME = OSTime;
-#endif /* M11102155_PA1_PART_2_RM */
+
 
 
         OSTCBCur      = OSTCBHighRdy;
@@ -996,7 +994,11 @@ void  OSTimeTick (void)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-
+#ifdef M11102155_PA1_PART_2_RM
+    // At each end of tick add number of tick that a task execute.
+    OSTCBCur->num_recent_execute_time++;
+    printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
+#endif /* M11102155_PA1_PART_2_RM */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
     OSTimeTickHook();                                      /* Call user definable hook                     */
@@ -1007,11 +1009,27 @@ void  OSTimeTick (void)
     OS_TRACE_TICK_INCREMENT(OSTime);
     OS_EXIT_CRITICAL();
 #endif
+
+
+#ifdef M11102155_PA1_PART_2_RM
+    OS_TCB* check_violate_ptcb = OSTCBList;
+    while (check_violate_ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
+    {
+        if (OSTime > check_violate_ptcb->deadline_time)
+        {
+            printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
+            exit(1);
+        }
+        check_violate_ptcb = check_violate_ptcb->OSTCBNext;
+    }
+#endif /* M11102155_PA1_PART_2_RM */
+
+
     if (OSRunning == OS_TRUE) {
         /* Setting the end time for the OS */
         if (OSTimeGet() > SYSTEM_END_TIME)
         {
-#ifdef M11102155_HW1
+#if defined (M11102155_HW1) | defined (M11102155_PA1_PART_2_RM)
             // Close the output file.
             fclose(Output_fp);
 #endif /* M11102155_HW1 */
@@ -1060,6 +1078,11 @@ void  OSTimeTick (void)
                     if ((ptcb->OSTCBStat & OS_STAT_SUSPEND) == OS_STAT_RDY) {  /* Is task suspended?       */
                         OSRdyGrp               |= ptcb->OSTCBBitY;             /* No,  Make ready          */
                         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+
+#ifdef M11102155_PA1_PART_2_RM
+                        ptcb->arrive_time = OSTime;
+#endif /* M11102155_PA1_PART_2_RM */
+
                         OS_TRACE_TASK_READY(ptcb);
                     }
                 }
@@ -1768,9 +1791,6 @@ void  OS_Sched (void)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-#ifdef M11102155_PA1_PART_2_RM
-    OS_PREVIOUS_TIME = OSTime;
-#endif /* M11102155_PA1_PART_2_RM */
 
     OS_ENTER_CRITICAL();
     if (OSIntNesting == 0u) {                          /* Schedule only if all ISRs done and ...       */
@@ -1807,6 +1827,26 @@ void  OS_Sched (void)
                 OSCtxSwCtr++;
                 //printf("%2d\t task(%2d)(%2d)   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
 #endif /* M11102155_HW1 */
+
+#ifdef M11102155_PA1_PART_2_RM
+                if (OSTCBHighRdy->OSTCBPrio == 63)
+                {
+                    printf("%2d\t task(%2d)(%2d)   \t task(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, (OSTCBCur -> response_time - OSTCBCur -> total_execute_time), OSTCBCur ->OSTCBDly);
+                    //fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)    \t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, 63, OSCtxSwCtr);
+                }
+                else
+                {
+                    printf("%2d\t task(%2d)(%2d)   \t task(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                    //printf("%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                    //fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                }
+
+
+#endif /* M11102155_PA1_PART_2_RM */
+
+
+
+
 
                 OS_TASK_SW();                          /* Perform a context switch                     */
             }
@@ -2236,6 +2276,7 @@ INT8U  OS_TCBInit (INT8U    prio,
         INT16U total_execute_time;            // Records the worst-case execution time of the task.
         INT16U arrive_time;                   // Records the arrival time of the task at time j.
         INT16U deadline_time;                 // Records the deadline of the task at time j.
+
 
         if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
         {

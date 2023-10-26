@@ -108,6 +108,8 @@ int  main (void)
 
     OSInit();                                                   /* Initialize uC/OS-II                                  */
 
+  
+
     /* Initialize Output File */
     OutFileInit();
 
@@ -159,7 +161,7 @@ int  main (void)
         OSTaskCreateExt(task,
             &TaskParameter[n],
             &Task_STK[n][TASK_STAKSIZE - 1],
-            TaskParameter[n].TaskPriority,
+            TaskParameter[n].TaskPeriodic,
             TaskParameter[n].TaskID,
             &Task_STK[n][0],
             TASK_STAKSIZE,
@@ -190,6 +192,13 @@ int  main (void)
 #ifdef M11102155_HW1
     printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
 #endif /* M11102155_HW1 */
+
+#ifdef M11102155_PA1_PART_2_RM
+    printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
+#endif /* M11102155_PA1_PART_2_RM */
+
+
+
 
 
     OSTimeSet(0);
@@ -223,67 +232,28 @@ static void task(void* p_arg)
 {
     task_para_set* task_date;
     task_date = p_arg;
-    int task_tick_count = 0;
-    int arrive_count = 0;       // record the times this task execute
+
+    int delay = 0;
     while (1)
     {
-        arrive_count++;
-        //task_tick_count = 0;
-        //while(OSTime < ()
 
+        // Initial #executed time(num_recent_execute_time), count the times this task appear and the deadline of the task.
+        OS_ENTER_CRITICAL();
         OSTCBCur->num_recent_execute_time = 0;
         OSTCBCur->num_times_job++;
+        OSTCBCur->deadline_time = OSTCBCur->arrive_time + OSTCBCur->period;
+        OS_EXIT_CRITICAL();
+
+        // For every task keep executing unitl finish or preemptive
+        while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);
 
 
-        int previous_os_time;
-
-        int end_os_time = OSTime + OSTCBCur->total_execute_time;
-        //printf("Tick : %d, Task %d \n", OSTime, task_date->TaskID);
-
-        // For every task's tick : 
-        while (OSTime < end_os_time)
-        {
-            //printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date->TaskPriority, task_date->TaskPeriodic, (OSTime + task_date->TaskPeriodic));
-            //printf("Tick : %d, Task %d \n", OSTime, task_date->TaskID);
-            
-            //printf("OSTime = %d ........... task %d\n", OSTime, task_date ->TaskID);
-
-
-            // For every tick do nothing.
-            while (1)
-            {
-                if (OSTime != OS_PREVIOUS_TIME)
-                {
-                    //OS_PREVIOUS_TIME = OSTime;
-                    break;
-                }
-            }
-
-
-            printf("Tick : %d, Task %d \n", OS_PREVIOUS_TIME, task_date->TaskID);
-            OS_PREVIOUS_TIME = OSTime;
-            OSTCBCur->num_recent_execute_time++;
-            end_os_time = OSTime + (OSTCBCur -> total_execute_time - OSTCBCur -> num_recent_execute_time);
-        }
-
-
-        
-
-
-        //printf("Tick : %d, Hello from task %d (prio : %d) then delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, task_date -> TaskPriority, task_date -> TaskPeriodic, (OSTime + task_date -> TaskPeriodic));
-        //printf("Tick : %2d   task(%2d)(%2d), prio = %d and delay for %d tick, the deadline of the task is at %d tick\n", OSTime, task_date->TaskID, arrive_count, task_date->TaskPriority, task_date->TaskPeriodic, (OSTime + task_date->TaskPeriodic));
-        //printf("%d \t task(%d)(%d) \t %d\n", OSTime, task_date->TaskID, OSTCBCur->OSTCBCtxSwCtr, OSCtxSwCtr);
-
-
-
-
-
-
-
-        OSTimeDly(task_date->TaskPeriodic);
-
-
-
+        // Compute the delay time before task arrive again.
+        OS_ENTER_CRITICAL();
+        delay = OSTCBCur->deadline_time - OSTime;
+        OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+        OS_EXIT_CRITICAL();
+        OSTimeDly(delay);
 
 
         //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)

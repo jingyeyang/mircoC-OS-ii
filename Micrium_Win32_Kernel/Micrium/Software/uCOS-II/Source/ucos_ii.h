@@ -69,13 +69,13 @@ extern "C" {
 */
 
 /* End time for the simulation */
-#define SYSTEM_END_TIME 100
+#define SYSTEM_END_TIME 30
 
 /* Input File */
 FILE* fp;
 
 #ifdef M11102155_PA1_PART_2_RM
-#define INPUT_FILE_NAME "./RM/Task Set 2/TaskSet.txt"
+#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #endif /* M11102155_PA1_PART_2_RM */
 
 #ifdef M11102155_PA1_PART_1
@@ -112,10 +112,6 @@ OS_STK** Task_STK;
 
 /* Create Task */
 task_para_set TaskParameter[OS_MAX_TASKS];
-
-
-// Record OS previous time
-INT32U OS_PREVIOUS_TIME;
 
 
 #ifdef   OS_GLOBALS
@@ -699,8 +695,8 @@ typedef struct os_tcb {
     INT16U arrive_time;                   // Records the arrival time of the task at time j.
     INT16U period;                        // Record period of the task.
     INT16U deadline_time;                 // Records the deadline of the task at time j.
+    INT16U response_time;                 // Record the response time of the task at time j.
 
-    INT32U previous_os_time;              // Record the last of OSTime that task be interrupt or delay.
 
     /*
         - e.g. : task 5's execution time is 3 ticks and occur periodically for every 8 ticks, ask the recod of third time task 5 occur.
@@ -716,12 +712,6 @@ typedef struct os_tcb {
             - total_execute_time      =  3 (worst total execute time)
             - arrive_time             = 24 (task 5's third time arrive time is at tick 24)
             - deadline_time           = 32 (task 5's forth time arrive time is at tick 24 + 8 = 32)
-    
-        - So, use upper record to check whether the task is violate(overflow) or not.
-            - consider the remain execution time plus current is larger than deadline time or not !!!
-               - remain_execution_time = (total_execute_time) - (num_recent_execute_time)
-               - consider " OSTick + remain_execution_time > deadline_time ? "
-    
     */
 
 #endif /* M11102155_PA1_PART_2_RM */
