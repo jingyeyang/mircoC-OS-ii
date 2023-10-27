@@ -101,11 +101,12 @@ void OutFileInit()
     /* Clear the file */
     if ((Output_err = fopen_s(&Output_fp, OUTPUT_FILE_NAME, "w")) == 0)
     {   
-        fclose(Output_fp);
+        printf("%s open success \n", OUTPUT_FILE_NAME);
     }
     else
     {
-        printf("Error to clear output file");
+        printf("Error to clear output file\n");
+        fclose(Output_fp);
     }
 }
 

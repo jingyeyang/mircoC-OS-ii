@@ -78,6 +78,8 @@ FILE* fp;
 #define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #endif /* M11102155_PA1_PART_2_RM */
 
+
+
 #ifdef M11102155_PA1_PART_1
 #define INPUT_FILE_NAME "./TaskSet.txt"
 #endif /* M11102155_PA1_PART_1 */
@@ -89,7 +91,6 @@ FILE* fp;
 
 /* Output File */
 FILE* Output_fp;
-errno_t Output_err;
 errno_t Output_err;
 /* Output File */
 

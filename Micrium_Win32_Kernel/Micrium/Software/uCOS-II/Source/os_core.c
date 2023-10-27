@@ -732,6 +732,64 @@ void  OSIntExit (void)
                     OSCtxSwCtr++;
 #endif /* M11102155_HW1 */
 
+#ifdef M11102155_PA1_PART_2_RM
+                    if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
+                    {
+                        // Compute response time.
+                        OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+                        if (OSTCBHighRdy->OSTCBPrio == 63)
+                        {
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                        }
+                        else
+                        {
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                        }
+                        OSTCBCur->num_times_job++;
+
+                        // Do delay !!! 
+                        INT8U      y;
+                        INT32U ticks = OSTCBCur->deadline_time - OSTime;
+                        if (ticks > 0u) {                            /* 0 means no delay!                                  */
+                            OS_ENTER_CRITICAL();
+                            y = OSTCBCur->OSTCBY;        /* Delay current task                                 */
+                            OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
+                            OS_TRACE_TASK_SUSPENDED(OSTCBCur);
+                            if (OSRdyTbl[y] == 0u) {
+                                OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
+                            }
+                            OSTCBCur->OSTCBDly = ticks;              /* Load ticks in TCB                                  */
+                            OS_TRACE_TASK_DLY(ticks);
+                            OS_EXIT_CRITICAL();
+                        }
+                        //printf("     task %d ---- ISR level delay : %2d\n", OSTCBCur->OSTCBId, ticks);
+                    }
+                    else
+                    {
+                        if (OSTCBHighRdy->OSTCBPrio == 63)
+                        {
+                            printf("%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)      \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63);
+                            fprintf(Output_fp, "%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)      \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63);
+                        }
+                        else
+                        {
+                            if (OSTCBCur->OSTCBPrio == 63)
+                            {
+                                printf("%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                                fprintf(Output_fp, "%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                            }
+                            else
+                            {
+                                printf("%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)(%2d)  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                                fprintf(Output_fp, "%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)(%2d)  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                            }
+                        }
+                    }
+
+#endif /* M11102155_PA1_PART_2_RM */
+
                     OSIntCtxSw();                          /* Perform interrupt level ctx switch       */
                 } else {
                     OS_TRACE_ISR_EXIT();
@@ -997,12 +1055,16 @@ void  OSTimeTick (void)
 #ifdef M11102155_PA1_PART_2_RM
     // At each end of tick add number of tick that a task execute.
     OSTCBCur->num_recent_execute_time++;
-    printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
+    //printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
 #endif /* M11102155_PA1_PART_2_RM */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
     OSTimeTickHook();                                      /* Call user definable hook                     */
 #endif
+
+
+
+
 #if OS_TIME_GET_SET_EN > 0u
     OS_ENTER_CRITICAL();                                   /* Update the 32-bit tick counter               */
     OSTime++;
@@ -1016,8 +1078,11 @@ void  OSTimeTick (void)
     while (check_violate_ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
     {
         if (OSTime > check_violate_ptcb->deadline_time)
-        {
-            printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
+        {   
+            //printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
+            // It violate at the last Time tick.
+            printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+            fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
             exit(1);
         }
         check_violate_ptcb = check_violate_ptcb->OSTCBNext;
@@ -1080,7 +1145,11 @@ void  OSTimeTick (void)
                         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
 
 #ifdef M11102155_PA1_PART_2_RM
+                        OS_ENTER_CRITICAL();
                         ptcb->arrive_time = OSTime;
+                        ptcb->num_recent_execute_time = 0;
+                        ptcb->deadline_time = ptcb->arrive_time + ptcb->period;
+                        OS_EXIT_CRITICAL();
 #endif /* M11102155_PA1_PART_2_RM */
 
                         OS_TRACE_TASK_READY(ptcb);
@@ -1831,17 +1900,15 @@ void  OS_Sched (void)
 #ifdef M11102155_PA1_PART_2_RM
                 if (OSTCBHighRdy->OSTCBPrio == 63)
                 {
-                    printf("%2d\t task(%2d)(%2d)   \t task(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, (OSTCBCur -> response_time - OSTCBCur -> total_execute_time), OSTCBCur ->OSTCBDly);
-                    //fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)    \t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, 63, OSCtxSwCtr);
+                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, (OSTCBCur -> response_time - OSTCBCur -> total_execute_time), OSTCBCur ->OSTCBDly);
+                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
                 else
                 {
-                    printf("%2d\t task(%2d)(%2d)   \t task(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                    //printf("%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
-                    //fprintf(Output_fp, "%2d\t task(%2d)(%2d)   \t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
+                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
-
-
+                OSTCBCur->num_times_job++;
 #endif /* M11102155_PA1_PART_2_RM */
 
 

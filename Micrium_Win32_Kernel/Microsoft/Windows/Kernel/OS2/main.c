@@ -232,20 +232,20 @@ static void task(void* p_arg)
 {
     task_para_set* task_date;
     task_date = p_arg;
-
     int delay = 0;
+    
+    // Initial #executed time(num_recent_execute_time) and the deadline of the task.
+    OS_ENTER_CRITICAL();
+    OSTCBCur->num_recent_execute_time = 0;
+    OSTCBCur->deadline_time = OSTCBCur->arrive_time + OSTCBCur->period;
+    OS_EXIT_CRITICAL();
+    
     while (1)
     {
 
-        // Initial #executed time(num_recent_execute_time), count the times this task appear and the deadline of the task.
-        OS_ENTER_CRITICAL();
-        OSTCBCur->num_recent_execute_time = 0;
-        OSTCBCur->num_times_job++;
-        OSTCBCur->deadline_time = OSTCBCur->arrive_time + OSTCBCur->period;
-        OS_EXIT_CRITICAL();
 
         // For every task keep executing unitl finish or preemptive
-        while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);
+        while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);       // TimeTick interrupt happen before while loop end !!!
 
 
         // Compute the delay time before task arrive again.
@@ -253,14 +253,9 @@ static void task(void* p_arg)
         delay = OSTCBCur->deadline_time - OSTime;
         OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
         OS_EXIT_CRITICAL();
+        
+        //printf("     task %d ---- task level delay : %2d\n",OSTCBCur->OSTCBId, delay);
         OSTimeDly(delay);
-
-
-        //if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) == 0)
-        //{
-        //    fprintf(Output_fp, "Tick : %d,Hello from task %d\n", OSTime, task_date->TaskID);
-        //    fclose(Output_fp);
-        //}
     }
 }
 
