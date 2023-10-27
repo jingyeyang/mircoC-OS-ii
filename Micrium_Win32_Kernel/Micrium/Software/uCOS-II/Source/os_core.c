@@ -2206,12 +2206,12 @@ INT8U  OS_TCBInit (INT8U    prio,
         if (ptcb->OSTCBPrio == 63)
         {
             printf("Task[%3d] created, TCB Address %6x\n", ptcb->OSTCBPrio, ptcb);
-            printf("------After TCB[%3d] degin linked------\n", ptcb->OSTCBPrio);
+            printf("------After TCB[%2d] degin linked------\n", ptcb->OSTCBPrio);
         }
         else
         {
             printf("Task[%3d] created, TCB Address %6x\n", ptcb->OSTCBId, ptcb);
-            printf("------After TCB[%3d] degin linked------\n", ptcb->OSTCBId);
+            printf("------After TCB[%2d] degin linked------\n", ptcb->OSTCBId);
         }
 #endif /* M11102155_PA1_PART_1 */
 
