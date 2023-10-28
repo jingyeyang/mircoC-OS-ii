@@ -59,6 +59,14 @@ void  OSTimeDly (INT32U ticks)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
+#ifdef M11102155_PA1_PART_2_RM
+    // Compute the delay time before task arrive again.
+    OS_ENTER_CRITICAL();
+    ticks = OSTCBCur->deadline_time - OSTime;
+    OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+    OS_EXIT_CRITICAL();
+#endif /* M11102155_PA1_PART_2_RM */
+
 
 
     if (OSIntNesting > 0u) {                     /* See if trying to call from an ISR                  */

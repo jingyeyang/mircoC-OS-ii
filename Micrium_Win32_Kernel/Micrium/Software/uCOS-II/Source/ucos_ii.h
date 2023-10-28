@@ -75,10 +75,9 @@ extern "C" {
 FILE* fp;
 
 #ifdef M11102155_PA1_PART_2_RM
-#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
+//#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
+#define INPUT_FILE_NAME "./TaskSet.txt"
 #endif /* M11102155_PA1_PART_2_RM */
-
-
 
 #ifdef M11102155_PA1_PART_1
 #define INPUT_FILE_NAME "./TaskSet.txt"
@@ -716,9 +715,6 @@ typedef struct os_tcb {
     */
 
 #endif /* M11102155_PA1_PART_2_RM */
-
-
-
 
 } OS_TCB;
 

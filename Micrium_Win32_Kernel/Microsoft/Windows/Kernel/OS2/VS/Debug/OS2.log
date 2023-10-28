@@ -1,8 +1,29 @@
-﻿  os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1086,13): warning C4013: 'exit' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2342,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2341,16): warning C4101: 'num_times_job': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2343,16): warning C4101: 'total_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2345,16): warning C4101: 'deadline_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2344,16): warning C4101: 'arrive_time': unreferenced local variable
+﻿  os_cpu_c.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c(627,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  os_core.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1087,13): warning C4013: 'exit' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2344,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2343,16): warning C4101: 'num_times_job': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2345,16): warning C4101: 'total_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2347,16): warning C4101: 'deadline_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2346,16): warning C4101: 'arrive_time': unreferenced local variable
+  os_dbg_r.c
+  os_flag.c
+  os_mbox.c
+  os_mem.c
+  os_mutex.c
+  os_q.c
+  os_sem.c
+  os_task.c
+  os_time.c
+  os_tmr.c
+  app_hooks.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(145,27): warning C4013: 'atoi' undefined; assuming extern returning int
+  main.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(120,16): warning C4013: 'malloc' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(120,14): warning C4047: '=': 'OS_STK **' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(126,21): warning C4047: '=': 'OS_STK *' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(164,29): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': unreferenced local variable
+  Generating Code...
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

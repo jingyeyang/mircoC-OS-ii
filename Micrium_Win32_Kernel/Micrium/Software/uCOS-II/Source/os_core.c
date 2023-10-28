@@ -698,8 +698,6 @@ void  OSIntExit (void)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-
-
     if (OSRunning == OS_TRUE) {
         OS_ENTER_CRITICAL();
         if (OSIntNesting > 0u) {                           /* Prevent OSIntNesting from wrapping       */
@@ -739,13 +737,17 @@ void  OSIntExit (void)
                         OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
                         if (OSTCBHighRdy->OSTCBPrio == 63)
                         {
-                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, 
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, 
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                         }
                         else
                         {
-                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
-                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, 
+                                OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, 
+                                OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
                         }
                         OSTCBCur->num_times_job++;
 
@@ -787,7 +789,6 @@ void  OSIntExit (void)
                             }
                         }
                     }
-
 #endif /* M11102155_PA1_PART_2_RM */
 
                     OSIntCtxSw();                          /* Perform interrupt level ctx switch       */
@@ -1860,7 +1861,6 @@ void  OS_Sched (void)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-
     OS_ENTER_CRITICAL();
     if (OSIntNesting == 0u) {                          /* Schedule only if all ISRs done and ...       */
         if (OSLockNesting == 0u) {                     /* ... scheduler is not locked                  */
@@ -1880,7 +1880,6 @@ void  OS_Sched (void)
                 OS_TLS_TaskSw();
 #endif
 #endif
-
 #ifdef M11102155_HW1
                 if (OSTCBHighRdy->OSTCBPrio == 63)
                 {
@@ -1900,20 +1899,20 @@ void  OS_Sched (void)
 #ifdef M11102155_PA1_PART_2_RM
                 if (OSTCBHighRdy->OSTCBPrio == 63)
                 {
-                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, (OSTCBCur -> response_time - OSTCBCur -> total_execute_time), OSTCBCur ->OSTCBDly);
-                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, 
+                        (OSTCBCur -> response_time - OSTCBCur -> total_execute_time), OSTCBCur ->OSTCBDly);
+                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, 
+                        (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
                 else
                 {
-                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, 
+                        OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, 
+                        OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
                 OSTCBCur->num_times_job++;
 #endif /* M11102155_PA1_PART_2_RM */
-
-
-
-
 
                 OS_TASK_SW();                          /* Perform a context switch                     */
             }
@@ -2221,10 +2220,11 @@ INT8U  OS_TCBInit (INT8U    prio,
 
 #ifdef M11102155_PA1_PART_2_RM
     task_para_set* task_parameter = (task_para_set*)p_arg;
-    if (p_arg != 0)      // (void*) p_arg == 0 : Idle task.
-    {
-        printf("Task ID = %2d,  arr_time = %2d,  exe_time = %2d,  period_time = %2d,   prio = %2d\n", task_parameter ->TaskID, task_parameter ->TaskArriveTime, task_parameter->TaskExecutionTime, task_parameter->TaskPeriodic, task_parameter->TaskPriority);
-    }
+    //if (p_arg != 0)      // (void*) p_arg == 0 : Idle task.
+    //{
+    //    printf("Task ID = %2d,  arr_time = %2d,  exe_time = %2d,  period_time = %2d,   prio = %2d\n", task_parameter ->TaskID, 
+    // task_parameter ->TaskArriveTime, task_parameter->TaskExecutionTime, task_parameter->TaskPeriodic, task_parameter->TaskPriority);
+    //}
 #endif /* M11102155_PA1_PART_2_RM */
 
 
@@ -2246,7 +2246,9 @@ INT8U  OS_TCBInit (INT8U    prio,
         if (p_arg != 0)
         {
             //ptcb->OSTCBStat = OS_STAT_SUSPEND;
-            ptcb->OSTCBDly = (INT32U)(task_parameter->TaskArriveTime);    // Cuase task have arrive time, we set the task delay #arrive time to meet the task's arrive time.
+            ptcb->OSTCBDly = (INT32U)(task_parameter->TaskArriveTime);    //  Cuase task have arrive time, we set the task delay 
+                                                                          //  #arrive time to meet the task's arrive time.
+            
             //printf("TASK %d delay init %d\n", task_parameter->TaskID, task_parameter->TaskArriveTime);
         }
         else
