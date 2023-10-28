@@ -919,11 +919,6 @@ void  OSStart (void)
 #endif /* M11102155_PA1_PART_1 */ 
 
 
-
-
-
-
-
         OSTCBCur      = OSTCBHighRdy;
         OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u      
     }
