@@ -66,9 +66,9 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 *********************************************************************************************************
 */
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
 static void task(void* p_arg);
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO*/
 
 #ifdef M11102155_PA1_PART_1
 static void task1(void* p_arg);
@@ -154,7 +154,7 @@ int  main (void)
 #endif // M11102155_PA1_PART_1
 
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
 
     for (n = 0; n < TASK_NUMBER; n++)
     {
@@ -169,7 +169,7 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
-#endif // M11102155_PA1_PART_2_RM
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
  
 
@@ -226,7 +226,7 @@ int  main (void)
 *********************************************************************************************************
 */
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
 
 static void task(void* p_arg)
 {
@@ -242,7 +242,7 @@ static void task(void* p_arg)
     }
 }
 
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO*/
 
 
 
