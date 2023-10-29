@@ -176,10 +176,6 @@ void InputFile()
 
 
 
-
-
-
-
 #ifdef M11102155_PA1_PART_3_FIFO
 
 void FIFOQInit()
@@ -195,7 +191,6 @@ void FIFOQInit()
     {
         printf("FIFO Queue malloc sucess !!!\n");
     }
-
     fifo_q_info->front = 0;
     fifo_q_info->end = 0;
     fifo_q_info->num_item = 0;
@@ -205,18 +200,7 @@ void FIFOQInit()
 
 }
 
-
-
-
-
-
 #endif /* M11102155_PA1_PART_3_FIFO */
-
-
-
-
-
-
 
 
 

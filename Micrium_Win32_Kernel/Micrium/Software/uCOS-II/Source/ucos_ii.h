@@ -120,10 +120,6 @@ OS_STK** Task_STK;
 task_para_set TaskParameter[OS_MAX_TASKS];
 
 
-
-
-
-
 #ifdef M11102155_PA1_PART_3_FIFO
 
 typedef struct FIFO_Q_INFO
@@ -135,10 +131,8 @@ typedef struct FIFO_Q_INFO
 
 }FIFO_Q_INFO;
 
-
 FIFO_Q_INFO* fifo_q_info;
 INT16U* fifo_queue;
-
 
 #endif /* M11102155_PA1_PART_3_FIFO */
 

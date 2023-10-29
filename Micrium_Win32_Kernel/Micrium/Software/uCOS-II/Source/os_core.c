@@ -1012,12 +1012,10 @@ void  OSSchedUnlock (void)
 void  OSStart (void)
 {
     if (OSRunning == OS_FALSE) {
- 
 #ifndef M11102155_PA1_PART_3_FIFO        
         OS_SchedNew();                               /* Find highest priority's task priority number   */
         OSPrioCur     = OSPrioHighRdy;
         OSTCBHighRdy  = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
-
 #ifdef M11102155_HW1
         // Open the Output file.
         if ((Output_err = fopen_s(&Output_fp, "./Output.txt", "a")) != 0)
@@ -1028,12 +1026,8 @@ void  OSStart (void)
         printf("%2d\t ***********   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBHighRdy-> OSTCBId, OSTCBHighRdy-> OSTCBCtxSwCtr, OSCtxSwCtr);
         fprintf(Output_fp, "%2d\t ***********   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
 #endif /* M11102155_HW1 */
-
-
 #ifdef M11102155_PA1_PART_1
-
-        OS_TCB* ptcb = OSTCBList;
-        
+        OS_TCB* ptcb = OSTCBList;     
         printf("================TCB linked list================\n");
         printf("TASK    Prev_TCB_addr   TCB_addr   Next_TCB_addr\n");
         while (ptcb != (OS_TCB*)0)
@@ -1048,14 +1042,10 @@ void  OSStart (void)
             }
             ptcb = ptcb->OSTCBNext;
         }
-
 #endif /* M11102155_PA1_PART_1 */ 
-
-
         OSTCBCur      = OSTCBHighRdy;
         OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u    
 #else
-
 
         OS_ENTER_CRITICAL();
         if (fifo_q_info->num_item != 0)
@@ -1070,17 +1060,11 @@ void  OSStart (void)
         }
         OS_EXIT_CRITICAL();
 
-        
         OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
         OSTCBCur = OSTCBHighRdy;
         OSStartHighRdy();
 
-
-
-
 #endif /* M11102155_PA1_PART_3_FIFO 1*/
-
-
 
     }
 }
@@ -1233,8 +1217,6 @@ void  OSTimeTick (void)
             if (ptcb->OSTCBDly != 0u) {                    /* No, Delayed or waiting for event with TO     */
                 ptcb->OSTCBDly--;                          /* Decrement nbr of ticks to end of delay       */
                 if (ptcb->OSTCBDly == 0u) {                /* Check for timeout                            */
-
-
                     if ((ptcb->OSTCBStat & OS_STAT_PEND_ANY) != OS_STAT_RDY) {
                         ptcb->OSTCBStat  &= (INT8U)~(INT8U)OS_STAT_PEND_ANY;   /* Yes, Clear status flag   */
                         ptcb->OSTCBStatPend = OS_STAT_PEND_TO;                 /* Indicate PEND timeout    */
@@ -1986,20 +1968,7 @@ void  OS_Sched (void)
             OS_SchedNew();
             OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
 #else
-            //if (fifo_q_info->num_item != 0)
-            //{
-            //    OSPrioHighRdy = fifo_queue[fifo_q_info->end];
-            //    fifo_q_info->end = ((fifo_q_info->end++) % (TASK_NUMBER + 1));
-            //    fifo_q_info->num_item--;
-            //    OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
-            //}
-            //else
-            //{
-            //    OSPrioHighRdy = 63;
-            //    OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
-            //}
 
-            //printf("DEQUEUE .....\n");
             OS_ENTER_CRITICAL();
             if (fifo_q_info->num_item != 0)
             {
