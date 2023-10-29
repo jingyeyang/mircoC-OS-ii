@@ -1,12 +1,12 @@
 ﻿  os_cpu_c.c
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c(627,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1087,13): warning C4013: 'exit' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2344,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2343,16): warning C4101: 'num_times_job': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2345,16): warning C4101: 'total_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2347,16): warning C4101: 'deadline_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2346,16): warning C4101: 'arrive_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1091,13): warning C4013: 'exit' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2348,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2347,16): warning C4101: 'num_times_job': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2349,16): warning C4101: 'total_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2351,16): warning C4101: 'deadline_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2350,16): warning C4101: 'arrive_time': unreferenced local variable
   os_dbg_r.c
   os_flag.c
   os_mbox.c

@@ -735,12 +735,15 @@ void  OSIntExit (void)
                     {
                         // Compute response time.
                         OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+
+
                         if (OSTCBHighRdy->OSTCBPrio == 63)
                         {
                             printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, 
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
                             fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time, 
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                            OSTCBCur->num_times_job++;
                         }
                         else
                         {
@@ -748,8 +751,8 @@ void  OSIntExit (void)
                                 OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
                             fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)   \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, 
                                 OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->deadline_time - OSTime);
+                            OSTCBCur->num_times_job++;
                         }
-                        OSTCBCur->num_times_job++;
 
                         // Do delay !!! 
                         INT8U      y;
@@ -766,6 +769,7 @@ void  OSIntExit (void)
                             OS_TRACE_TASK_DLY(ticks);
                             OS_EXIT_CRITICAL();
                         }
+
                         //printf("     task %d ---- ISR level delay : %2d\n", OSTCBCur->OSTCBId, ticks);
                     }
                     else
