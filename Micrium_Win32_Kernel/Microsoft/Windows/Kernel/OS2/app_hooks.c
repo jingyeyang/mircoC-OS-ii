@@ -174,6 +174,53 @@ void InputFile()
     /* read file */
 }
 
+
+
+
+
+
+
+#ifdef M11102155_PA1_PART_3_FIFO
+
+void FIFOQInit()
+{
+    fifo_queue = (INT16U*)malloc((TASK_NUMBER + 1) * sizeof(INT16U));
+    fifo_q_info = (FIFO_Q_INFO*)malloc(1 * sizeof(FIFO_Q_INFO));
+
+    if (fifo_queue == NULL | fifo_q_info == NULL)
+    {
+        printf("FIFO QUEUE malloc failed !!! \n");
+    }
+    else
+    {
+        printf("FIFO Queue malloc sucess !!!\n");
+    }
+
+    fifo_q_info->front = 0;
+    fifo_q_info->end = 0;
+    fifo_q_info->num_item = 0;
+    fifo_q_info->size = (TASK_NUMBER + 1);
+
+    printf("END OF FIFO QUEUE INIT !!!\n");
+
+}
+
+
+
+
+
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+
+
+
+
+
+
+
+
+
+
 #if (OS_APP_HOOKS_EN > 0)
 
 /*

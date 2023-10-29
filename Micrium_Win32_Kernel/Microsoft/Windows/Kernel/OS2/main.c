@@ -116,6 +116,13 @@ int  main (void)
     /* Input File */
     InputFile();
 
+
+#ifdef M11102155_PA1_PART_3_FIFO
+    // Init FIFO QUEUE.
+    FIFOQInit();
+#endif /* M11102155_PA1_PART_3_FIFO */
+
+
     /* Dynamic Create the Stack size */
     Task_STK = malloc(TASK_NUMBER * sizeof(int*));
 
@@ -154,7 +161,7 @@ int  main (void)
 #endif // M11102155_PA1_PART_1
 
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#ifdef M11102155_PA1_PART_2_RM
 
     for (n = 0; n < TASK_NUMBER; n++)
     {
@@ -169,7 +176,29 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA1_PART_2_RM */
+
+
+// Set task ID as priority.
+#ifdef M11102155_PA1_PART_3_FIFO
+
+    for (n = 0; n < TASK_NUMBER; n++)
+    {
+        OSTaskCreateExt(task,
+            &TaskParameter[n],
+            &Task_STK[n][TASK_STAKSIZE - 1],
+            TaskParameter[n].TaskID,
+            TaskParameter[n].TaskID,
+            &Task_STK[n][0],
+            TASK_STAKSIZE,
+            &TaskParameter[0],
+            (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
+    }
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+
+
+
 
  
 
@@ -193,9 +222,9 @@ int  main (void)
     printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
 #endif /* M11102155_HW1 */
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
     printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
 
 
@@ -237,7 +266,7 @@ static void task(void* p_arg)
     {
         // For every task keep executing unitl finish or preemptive
         while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);    // TimeTick interrupt happen before while loop end !!!
-       
+
         OSTimeDly(0);
     }
 }

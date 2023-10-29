@@ -694,8 +694,16 @@ void  OSStartHighRdy (void)
     OSTaskSwHook();
     OSRunning = 1;
 
+
+
     p_stk = (OS_TASK_STK *)OSTCBHighRdy->OSTCBStkPtr;                   /* OSTCBCur  = OSTCBHighRdy;                                */
                                                                         /* OSPrioCur = OSPrioHighRdy;                               */
+
+
+
+
+
+
 
     ResumeThread(p_stk->ThreadHandle);                                  // Modify for Running on Windows operating system
                                                                         /* Wait while task is created and until it is ready to run. */

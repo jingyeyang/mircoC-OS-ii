@@ -705,8 +705,36 @@ void  OSIntExit (void)
         }
         if (OSIntNesting == 0u) {                          /* Reschedule only if all ISRs complete ... */
             if (OSLockNesting == 0u) {                     /* ... and not locked.                      */
+                
+#ifndef M11102155_PA1_PART_3_FIFO                
                 OS_SchedNew();
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+#else
+
+                OS_ENTER_CRITICAL();
+                if (fifo_q_info->num_item == 0)         // there is no task in the waiting queue, execute the Idle task
+                {
+                    if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
+                    {
+                        OSPrioHighRdy = 63;
+                        OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+                    }
+                }
+                else
+                {
+                    if (OSTCBCur->OSTCBId == OS_TASK_IDLE_ID)
+                    {
+                        OSPrioHighRdy = fifo_queue[fifo_q_info->end];
+                        fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
+                        fifo_q_info->num_item--;
+                        OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+                    }
+
+                }
+                OS_EXIT_CRITICAL();
+                
+#endif /* M11102155_PA1_PART_3_FIFO */
+
                 if (OSPrioHighRdy != OSPrioCur) {          /* No Ctx Sw if current task is highest rdy */
 
 #ifndef M11102155_HW1
@@ -790,6 +818,50 @@ void  OSIntExit (void)
                         }
                     }
 #endif /* M11102155_PA1_PART_2_RM */
+
+
+#ifdef M11102155_PA1_PART_3_FIFO
+                    if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
+                    {
+                        // Compute response time.
+                        OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+
+                        // Do delay !!! 
+                        INT32U ticks = OSTCBCur->deadline_time - OSTime;
+                        if (ticks > 0u) {                            /* 0 means no delay!                                  */
+                            OS_ENTER_CRITICAL();
+                            OS_TRACE_TASK_SUSPENDED(OSTCBCur);
+                            OSTCBCur->OSTCBDly = ticks;              /* Load ticks in TCB                                  */
+                            OS_TRACE_TASK_DLY(ticks);
+                            OS_EXIT_CRITICAL();
+                        }
+
+                        if (OSTCBHighRdy->OSTCBPrio == 63)
+                        {
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            OSTCBCur->num_times_job++;
+                        }
+                    }
+                    else
+                    {
+                        if (OSTCBHighRdy->OSTCBPrio == 63)
+                        {
+                            printf("%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)      \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63);
+                            fprintf(Output_fp, "%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)      \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63);
+                        }
+                        else
+                        {
+                            if (OSTCBCur->OSTCBPrio == 63)
+                            {
+                                printf("%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                                fprintf(Output_fp, "%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                            }
+                        }
+                    }
+#endif /* M11102155_PA1_PART_3_FIFO */
 
                     OSIntCtxSw();                          /* Perform interrupt level ctx switch       */
                 } else {
@@ -940,6 +1012,8 @@ void  OSSchedUnlock (void)
 void  OSStart (void)
 {
     if (OSRunning == OS_FALSE) {
+ 
+#ifndef M11102155_PA1_PART_3_FIFO        
         OS_SchedNew();                               /* Find highest priority's task priority number   */
         OSPrioCur     = OSPrioHighRdy;
         OSTCBHighRdy  = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
@@ -978,11 +1052,36 @@ void  OSStart (void)
 #endif /* M11102155_PA1_PART_1 */ 
 
 
-
-
-
         OSTCBCur      = OSTCBHighRdy;
-        OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u      
+        OSStartHighRdy();                            /* Execute target specific code to start task     */       // set OSRunning = 1u    
+#else
+
+
+        OS_ENTER_CRITICAL();
+        if (fifo_q_info->num_item != 0)
+        {
+            OSPrioHighRdy = fifo_queue[fifo_q_info->end];
+            fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
+            fifo_q_info->num_item--;
+        }
+        else
+        {
+            OSPrioHighRdy = 63;
+        }
+        OS_EXIT_CRITICAL();
+
+        
+        OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
+        OSTCBCur = OSTCBHighRdy;
+        OSStartHighRdy();
+
+
+
+
+#endif /* M11102155_PA1_PART_3_FIFO 1*/
+
+
+
     }
 }
 
@@ -1053,11 +1152,11 @@ void  OSTimeTick (void)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
     // At each end of tick add number of tick that a task execute.
     OSTCBCur->num_recent_execute_time++;
     //printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
     OSTimeTickHook();                                      /* Call user definable hook                     */
@@ -1074,7 +1173,7 @@ void  OSTimeTick (void)
 #endif
 
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO) 
     OS_TCB* check_violate_ptcb = OSTCBList;
     while (check_violate_ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
     {
@@ -1084,21 +1183,22 @@ void  OSTimeTick (void)
             // It violate at the last Time tick.
             printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
             fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+            fclose(Output_fp);           // Close the output file.
             exit(1);
         }
         check_violate_ptcb = check_violate_ptcb->OSTCBNext;
     }
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
 
     if (OSRunning == OS_TRUE) {
         /* Setting the end time for the OS */
         if (OSTimeGet() > SYSTEM_END_TIME)
         {
-#if defined (M11102155_HW1) | defined (M11102155_PA1_PART_2_RM)
+#if defined (M11102155_HW1) | defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
             // Close the output file.
             fclose(Output_fp);
-#endif /* M11102155_HW1 */
+#endif /* M11102155_HW1 | M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO*/
             OSRunning = OS_FALSE;
             exit(0);
         }
@@ -1134,24 +1234,40 @@ void  OSTimeTick (void)
                 ptcb->OSTCBDly--;                          /* Decrement nbr of ticks to end of delay       */
                 if (ptcb->OSTCBDly == 0u) {                /* Check for timeout                            */
 
+
                     if ((ptcb->OSTCBStat & OS_STAT_PEND_ANY) != OS_STAT_RDY) {
                         ptcb->OSTCBStat  &= (INT8U)~(INT8U)OS_STAT_PEND_ANY;   /* Yes, Clear status flag   */
                         ptcb->OSTCBStatPend = OS_STAT_PEND_TO;                 /* Indicate PEND timeout    */
                     } else {
                         ptcb->OSTCBStatPend = OS_STAT_PEND_OK;
                     }
-
                     if ((ptcb->OSTCBStat & OS_STAT_SUSPEND) == OS_STAT_RDY) {  /* Is task suspended?       */
+
+#ifndef M11102155_PA1_PART_3_FIFO
                         OSRdyGrp               |= ptcb->OSTCBBitY;             /* No,  Make ready          */
                         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
+#else
 
-#ifdef M11102155_PA1_PART_2_RM
+                    if (fifo_q_info->num_item != fifo_q_info->size)
+                    {
+                        fifo_queue[fifo_q_info->front] = ptcb ->OSTCBId;
+                        fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
+                        fifo_q_info->num_item++;
+                    }
+                    else
+                    {
+                        printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
+                    }
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
                         OS_ENTER_CRITICAL();
                         ptcb->arrive_time = OSTime;
                         ptcb->num_recent_execute_time = 0;
                         ptcb->deadline_time = ptcb->arrive_time + ptcb->period;
                         OS_EXIT_CRITICAL();
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
                         OS_TRACE_TASK_READY(ptcb);
                     }
@@ -1864,8 +1980,45 @@ void  OS_Sched (void)
     OS_ENTER_CRITICAL();
     if (OSIntNesting == 0u) {                          /* Schedule only if all ISRs done and ...       */
         if (OSLockNesting == 0u) {                     /* ... scheduler is not locked                  */
+            
+           
+#ifndef M11102155_PA1_PART_3_FIFO                
             OS_SchedNew();
             OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+#else
+            //if (fifo_q_info->num_item != 0)
+            //{
+            //    OSPrioHighRdy = fifo_queue[fifo_q_info->end];
+            //    fifo_q_info->end = ((fifo_q_info->end++) % (TASK_NUMBER + 1));
+            //    fifo_q_info->num_item--;
+            //    OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+            //}
+            //else
+            //{
+            //    OSPrioHighRdy = 63;
+            //    OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+            //}
+
+            //printf("DEQUEUE .....\n");
+            OS_ENTER_CRITICAL();
+            if (fifo_q_info->num_item != 0)
+            {
+
+                OSPrioHighRdy = fifo_queue[fifo_q_info->end];
+                fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
+                fifo_q_info->num_item--;
+            }
+            else
+            {
+                OSPrioHighRdy = 63;
+            }
+            OS_EXIT_CRITICAL();
+            OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+            
+            
+                      
             if (OSPrioHighRdy != OSPrioCur) {          /* No Ctx Sw if current task is highest rdy     */
 #ifndef M11102155_HW1
 #if OS_TASK_PROFILE_EN > 0u
@@ -1896,7 +2049,7 @@ void  OS_Sched (void)
                 //printf("%2d\t task(%2d)(%2d)   \t\t\t task(%2d)(%2d)\t\t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->OSTCBCtxSwCtr, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->OSTCBCtxSwCtr, OSCtxSwCtr);
 #endif /* M11102155_HW1 */
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined(M11102155_PA1_PART_3_FIFO)
                 if (OSTCBHighRdy->OSTCBPrio == 63)
                 {
                     printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)       \t %2d \t %2d \t %2d\n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur -> response_time, 
@@ -1912,7 +2065,7 @@ void  OS_Sched (void)
                         OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
                 OSTCBCur->num_times_job++;
-#endif /* M11102155_PA1_PART_2_RM */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
                 OS_TASK_SW();                          /* Perform a context switch                     */
             }
@@ -2218,14 +2371,11 @@ INT8U  OS_TCBInit (INT8U    prio,
 #endif
 #endif
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+
     task_para_set* task_parameter = (task_para_set*)p_arg;
-    //if (p_arg != 0)      // (void*) p_arg == 0 : Idle task.
-    //{
-    //    printf("Task ID = %2d,  arr_time = %2d,  exe_time = %2d,  period_time = %2d,   prio = %2d\n", task_parameter ->TaskID, 
-    // task_parameter ->TaskArriveTime, task_parameter->TaskExecutionTime, task_parameter->TaskPeriodic, task_parameter->TaskPriority);
-    //}
-#endif /* M11102155_PA1_PART_2_RM */
+
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
 
 
 
@@ -2240,7 +2390,11 @@ INT8U  OS_TCBInit (INT8U    prio,
         ptcb->OSTCBStatPend      = OS_STAT_PEND_OK;        /* Clear pend status                        */
 
 
-#ifndef M11102155_PA1_PART_2_RM
+#ifndef M11102155_PA1_PART_3_FIFO
+        
+        ptcb->OSTCBDly = 0u;                     /* Task is not delayed                      */
+
+#ifndef M11102155_PA1_PART_2_RM 
         ptcb->OSTCBDly           = 0u;                     /* Task is not delayed                      */
 #else 
         if (p_arg != 0)
@@ -2256,6 +2410,21 @@ INT8U  OS_TCBInit (INT8U    prio,
             ptcb->OSTCBDly = 0u;
         }
 #endif /* M11102155_PA1_PART_2_RM */
+
+#else
+        if (p_arg != 0)
+        {
+            //ptcb->OSTCBStat = OS_STAT_SUSPEND;
+            ptcb->OSTCBDly = (INT32U)(task_parameter->TaskArriveTime);    //  Cuase task have arrive time, we set the task delay 
+                                                                          //  #arrive time to meet the task's arrive time.
+
+        }
+        else
+        {
+            ptcb->OSTCBDly = 0u;
+        }
+
+#endif /* M11102155_PA1_PART_3_FIFO */
 
 
 
@@ -2338,7 +2507,7 @@ INT8U  OS_TCBInit (INT8U    prio,
 #endif
 #endif
 
-#ifdef M11102155_PA1_PART_2_RM
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
 
         INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
         INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
@@ -2356,7 +2525,7 @@ INT8U  OS_TCBInit (INT8U    prio,
             ptcb->period = task_parameter->TaskPeriodic;
             ptcb->deadline_time = (ptcb->arrive_time) + (ptcb->period);
         }
-#endif /* M11102155_PA1_PART_2_RM */     
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */     
 
 
         OS_ENTER_CRITICAL();
@@ -2382,6 +2551,8 @@ INT8U  OS_TCBInit (INT8U    prio,
         }
         OSTCBList               = ptcb;
 
+#ifndef M11102155_PA1_PART_3_FIFO
+
 #ifndef M11102155_PA1_PART_2_RM
 
         OSRdyGrp |= ptcb->OSTCBBitY;         /* Make task ready to run                   */
@@ -2402,9 +2573,30 @@ INT8U  OS_TCBInit (INT8U    prio,
             OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
         }
 
-
-
 #endif /* M11102155_PA1_PART_2_RM */
+
+#else
+
+        if (p_arg != 0)
+        {
+            if (task_parameter->TaskArriveTime == 0)
+            {
+                if (fifo_q_info->num_item != fifo_q_info->size)
+                {
+                    fifo_queue[fifo_q_info->front] = task_parameter->TaskID;
+                    fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
+                    fifo_q_info->num_item++;
+                }
+                else
+                {
+                    printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
+                }
+            }
+        }
+        // consider ilde task or not ? 
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+
 
         
         

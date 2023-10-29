@@ -75,7 +75,7 @@ extern "C" {
 FILE* fp;
 
 #ifdef M11102155_PA1_PART_3_FIFO
-#define INPUT_FILE_NAME "./FIFO/Task Set 1/TaskSet.txt"
+#define INPUT_FILE_NAME "./FIFO/Task Set 2/TaskSet.txt"
 //#define INPUT_FILE_NAME "./TaskSet.txt"
 #endif /* M11102155_PA1_PART_3_FIFO */
 
@@ -118,6 +118,31 @@ OS_STK** Task_STK;
 
 /* Create Task */
 task_para_set TaskParameter[OS_MAX_TASKS];
+
+
+
+
+
+
+#ifdef M11102155_PA1_PART_3_FIFO
+
+typedef struct FIFO_Q_INFO
+{
+    INT16U front;
+    INT16U end;
+    INT16U num_item;
+    INT16U size;
+
+}FIFO_Q_INFO;
+
+
+FIFO_Q_INFO* fifo_q_info;
+INT16U* fifo_queue;
+
+
+#endif /* M11102155_PA1_PART_3_FIFO */
+
+
 
 
 #ifdef   OS_GLOBALS
@@ -1558,6 +1583,11 @@ void          OSCtxSw                 (void);
 
 void        OutFileInit               (void);
 void        InputFile                 (void);
+
+#ifdef M11102155_PA1_PART_3_FIFO
+void        FIFOQInit(void);
+#endif /* M11102155_PA1_PART_3_FIFO */
+
 
 /*
 *********************************************************************************************************
