@@ -66,9 +66,9 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 *********************************************************************************************************
 */
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
 static void task(void* p_arg);
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO*/
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 #ifdef M11102155_PA1_PART_1
 static void task1(void* p_arg);
@@ -117,10 +117,10 @@ int  main (void)
     InputFile();
 
 
-#ifdef M11102155_PA1_PART_3_FIFO
+#ifdef M11102155_PA2_PART_1_EDF
     // Init FIFO QUEUE.
     FIFOQInit();
-#endif /* M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA2_PART_1_EDF */
 
 
     /* Dynamic Create the Stack size */
@@ -180,7 +180,7 @@ int  main (void)
 
 
 // Set task ID as priority.
-#ifdef M11102155_PA1_PART_3_FIFO
+#ifdef M11102155_PA2_PART_1_EDF
 
     for (n = 0; n < TASK_NUMBER; n++)
     {
@@ -195,7 +195,7 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
-#endif /* M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA2_PART_1_EDF */
 
 
 
@@ -222,9 +222,9 @@ int  main (void)
     printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
 #endif /* M11102155_HW1 */
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
     printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 
 
@@ -255,7 +255,7 @@ int  main (void)
 *********************************************************************************************************
 */
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
 
 static void task(void* p_arg)
 {
@@ -271,7 +271,7 @@ static void task(void* p_arg)
     }
 }
 
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO*/
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 
 

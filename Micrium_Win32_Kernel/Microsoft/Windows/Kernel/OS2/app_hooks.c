@@ -176,7 +176,7 @@ void InputFile()
 
 
 
-#ifdef M11102155_PA1_PART_3_FIFO
+#ifdef M11102155_PA2_PART_1_EDF
 
 void FIFOQInit()
 {
@@ -200,7 +200,17 @@ void FIFOQInit()
 
 }
 
-#endif /* M11102155_PA1_PART_3_FIFO */
+
+
+void EDFHeapInit()
+{
+
+
+
+
+}
+
+#endif /* M11102155_PA2_PART_1_EDF */
 
 
 

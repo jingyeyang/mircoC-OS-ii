@@ -1,11 +1,10 @@
-﻿  os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(727,51): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1063,39): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1187,13): warning C4013: 'exit' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2007,43): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2513,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2512,16): warning C4101: 'num_times_job': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2514,16): warning C4101: 'total_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2516,16): warning C4101: 'deadline_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2515,16): warning C4101: 'arrive_time': unreferenced local variable
+﻿  os_time.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_time.c(57,16): warning C4101: 'y': unreferenced local variable
+  main.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(127,16): warning C4013: 'malloc' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(127,14): warning C4047: '=': 'OS_STK **' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(133,21): warning C4047: '=': 'OS_STK *' differs in levels of indirection from 'int'
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(190,29): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': unreferenced local variable
+  Generating Code...
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

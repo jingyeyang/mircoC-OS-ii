@@ -35,7 +35,8 @@
 //#define M11102155_HW1
 //#define M11102155_PA1_PART_1
 //#define M11102155_PA1_PART_2_RM
-#define M11102155_PA1_PART_3_FIFO
+//#define M11102155_PA1_PART_3_FIFO
+#define M11102155_PA2_PART_1_EDF
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,11 +69,23 @@ extern "C" {
 *********************************************************************************************************
 */
 
+
 /* End time for the simulation */
+#ifdef M11102155_PA2_PART_1_EDF
+#define SYSTEM_END_TIME 40
+#else 
 #define SYSTEM_END_TIME 30
+#endif /* M11102155_PA2_PART_1_EDF */
+
 
 /* Input File */
 FILE* fp;
+
+#ifdef M11102155_PA2_PART_1_EDF
+#define INPUT_FILE_NAME "./EDF/TaskSet1.txt"
+//#define INPUT_FILE_NAME "./TaskSet.txt"
+#endif /* M11102155_PA2_PART_1_EDF */
+
 
 #ifdef M11102155_PA1_PART_3_FIFO
 #define INPUT_FILE_NAME "./FIFO/Task Set 2/TaskSet.txt"
@@ -120,7 +133,7 @@ OS_STK** Task_STK;
 task_para_set TaskParameter[OS_MAX_TASKS];
 
 
-#ifdef M11102155_PA1_PART_3_FIFO
+#ifdef M11102155_PA2_PART_1_EDF
 
 typedef struct FIFO_Q_INFO
 {
@@ -134,7 +147,7 @@ typedef struct FIFO_Q_INFO
 FIFO_Q_INFO* fifo_q_info;
 INT16U* fifo_queue;
 
-#endif /* M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA2_PART_1_EDF */
 
 
 
@@ -712,7 +725,7 @@ typedef struct os_tcb {
     INT32U           OSTCBRegTbl[OS_TASK_REG_TBL_SIZE];
 #endif
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
 
     INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
     INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
@@ -739,7 +752,7 @@ typedef struct os_tcb {
             - deadline_time           = 32 (task 5's forth time arrive time is at tick 24 + 8 = 32)
     */
 
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 } OS_TCB;
 
@@ -1578,9 +1591,9 @@ void          OSCtxSw                 (void);
 void        OutFileInit               (void);
 void        InputFile                 (void);
 
-#ifdef M11102155_PA1_PART_3_FIFO
+#ifdef M11102155_PA2_PART_1_EDF
 void        FIFOQInit(void);
-#endif /* M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA2_PART_1_EDF */
 
 
 /*

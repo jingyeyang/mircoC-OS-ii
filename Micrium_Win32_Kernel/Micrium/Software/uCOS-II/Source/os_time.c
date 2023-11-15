@@ -59,13 +59,13 @@ void  OSTimeDly (INT32U ticks)
     OS_CPU_SR  cpu_sr = 0u;
 #endif
 
-#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA1_PART_3_FIFO)
+#if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
     // Compute the delay time before task arrive again.
     OS_ENTER_CRITICAL();
     ticks = OSTCBCur->deadline_time - OSTime;
     OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
     OS_EXIT_CRITICAL();
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 
 
@@ -78,14 +78,14 @@ void  OSTimeDly (INT32U ticks)
     if (ticks > 0u) {                            /* 0 means no delay!                                  */
         OS_ENTER_CRITICAL();
 
-#ifndef M11102155_PA1_PART_3_FIFO
+#ifndef M11102155_PA2_PART_1_EDF
         y            =  OSTCBCur->OSTCBY;        /* Delay current task                                 */
         OSRdyTbl[y] &= (OS_PRIO)~OSTCBCur->OSTCBBitX;
         //OS_TRACE_TASK_SUSPENDED(OSTCBCur);
         if (OSRdyTbl[y] == 0u) {
             OSRdyGrp &= (OS_PRIO)~OSTCBCur->OSTCBBitY;
         }
-#endif /* M11102155_PA1_PART_3_FIFO */
+#endif /* M11102155_PA2_PART_1_EDF */
 
         OS_TRACE_TASK_SUSPENDED(OSTCBCur);
         OSTCBCur->OSTCBDly = ticks;              /* Load ticks in TCB                                  */
