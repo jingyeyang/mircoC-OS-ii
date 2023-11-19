@@ -118,8 +118,10 @@ int  main (void)
 
 
 #ifdef M11102155_PA2_PART_1_EDF
-    // Init FIFO QUEUE.
-    FIFOQInit();
+
+    // Init EDF heap.
+    EDFHeapInit();
+
 #endif /* M11102155_PA2_PART_1_EDF */
 
 
@@ -195,6 +197,14 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
+
+    printf(" after task create :: \n");
+    for (int edf_heap_id = 1; edf_heap_id <= edf_heap_info->num_item; edf_heap_id++)
+    {
+        printf("< %d, %d >\n", edf_heap[edf_heap_id].task_id, edf_heap[edf_heap_id].deadline);
+    }
+
+
 #endif /* M11102155_PA2_PART_1_EDF */
 
 
@@ -225,8 +235,6 @@ int  main (void)
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
     printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
-
-
 
 
 
@@ -264,7 +272,7 @@ static void task(void* p_arg)
     
     while (1)
     {
-        // For every task keep executing unitl finish or preemptive
+        // For every task keep executing until finish or preemptive
         while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);    // TimeTick interrupt happen before while loop end !!!
 
         OSTimeDly(0);

@@ -135,17 +135,20 @@ task_para_set TaskParameter[OS_MAX_TASKS];
 
 #ifdef M11102155_PA2_PART_1_EDF
 
-typedef struct FIFO_Q_INFO
+typedef struct TASK_PAIR
 {
-    INT16U front;
-    INT16U end;
+    INT16U task_id;
+    INT16U deadline;
+}TASK_PAIR;
+
+typedef struct EDF_HEAP_INFO
+{
     INT16U num_item;
     INT16U size;
+}EDF_HEAP_INFO;
 
-}FIFO_Q_INFO;
-
-FIFO_Q_INFO* fifo_q_info;
-INT16U* fifo_queue;
+EDF_HEAP_INFO* edf_heap_info;
+TASK_PAIR* edf_heap;
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
@@ -1592,7 +1595,13 @@ void        OutFileInit               (void);
 void        InputFile                 (void);
 
 #ifdef M11102155_PA2_PART_1_EDF
-void        FIFOQInit(void);
+
+void        EDFHeapSwap(TASK_PAIR* a, TASK_PAIR* b);
+void        EDFHeapify(int location);
+void        EDFHeapDelete();
+void        EDFHeapInsert(INT16U insert_task_id, INT16U insert_task_deadline);
+void        EDFHeapInit(void);
+
 #endif /* M11102155_PA2_PART_1_EDF */
 
 

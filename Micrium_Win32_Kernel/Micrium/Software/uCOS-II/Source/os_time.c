@@ -60,8 +60,10 @@ void  OSTimeDly (INT32U ticks)
 #endif
 
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
+
     // Compute the delay time before task arrive again.
     OS_ENTER_CRITICAL();
+    EDFHeapDelete();            // Remove the task from heap.
     ticks = OSTCBCur->deadline_time - OSTime;
     OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
     OS_EXIT_CRITICAL();

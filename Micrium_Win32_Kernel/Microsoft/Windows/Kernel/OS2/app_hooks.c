@@ -178,35 +178,103 @@ void InputFile()
 
 #ifdef M11102155_PA2_PART_1_EDF
 
-void FIFOQInit()
+// Doing EDF Heap's node swapping.
+void EDFHeapSwap(TASK_PAIR* a, TASK_PAIR* b)
 {
-    fifo_queue = (INT16U*)malloc((TASK_NUMBER + 1) * sizeof(INT16U));
-    fifo_q_info = (FIFO_Q_INFO*)malloc(1 * sizeof(FIFO_Q_INFO));
+    TASK_PAIR temp = *b;
+    *b = *a;
+    *a = temp;
+}
 
-    if (fifo_queue == NULL | fifo_q_info == NULL)
-    {
-        printf("FIFO QUEUE malloc failed !!! \n");
-    }
-    else
-    {
-        printf("FIFO Queue malloc sucess !!!\n");
-    }
-    fifo_q_info->front = 0;
-    fifo_q_info->end = 0;
-    fifo_q_info->num_item = 0;
-    fifo_q_info->size = (TASK_NUMBER + 1);
+// Doing the Heapify.
+void EDFHeapify(int location)
+{
+    int mini = location;
+    int left = (location* 2);
+    int right = left + 1;
 
-    printf("END OF FIFO QUEUE INIT !!!\n");
+    if ((left <= edf_heap_info->num_item) && (edf_heap[left].deadline < edf_heap[mini].deadline))
+    {
+        mini = left;
+    }
+
+    if ((right <= edf_heap_info->num_item) && (edf_heap[right].deadline < edf_heap[mini].deadline))
+    {
+        mini = right;
+    }
+
+    if (mini != location)
+    {
+        EDFHeapSwap(&(edf_heap[location]), &(edf_heap[mini]));
+        EDFHeapify(mini);
+    }
+}
+
+// Delete the task from EDF Heap.
+void EDFHeapDelete()
+{  
+    if (edf_heap_info->num_item > 0)
+    {
+        //printf("TICK %d :: delete < %d , %d >\n", OSTime, edf_heap[1].task_id, edf_heap[1].deadline);
+        EDFHeapSwap(&(edf_heap[1]), &(edf_heap[edf_heap_info->num_item]));
+        edf_heap_info->num_item--;
+        EDFHeapify(1);
+    }
+}
+
+// Insert the task into EDF Heap (minimum heap order as the deadline).
+void EDFHeapInsert(INT16U insert_task_id, INT16U insert_task_deadline)
+{
+    //printf("TICK %d :: insert < %d , %d >\n", OSTime, insert_task_id, insert_task_deadline);
+    edf_heap_info->num_item++;
+    edf_heap[edf_heap_info->num_item].task_id = insert_task_id;
+    edf_heap[edf_heap_info->num_item].deadline = insert_task_deadline;
+
+    INT16U location = edf_heap_info->num_item;
+
+    while ((edf_heap[location].deadline < edf_heap[(location / 2)].deadline) && ((location / 2) > 0))
+    {
+
+        EDFHeapSwap(&(edf_heap[location]), &(edf_heap[(location / 2)]));
+        location = (location / 2);
+    }
+
+    if ((edf_heap[location].deadline == edf_heap[(location / 2)].deadline) && (edf_heap[location].task_id < edf_heap[(location / 2)].task_id) && ((location / 2) > 0))
+    {
+        EDFHeapSwap(&(edf_heap[location]), &(edf_heap[(location / 2)]));
+    }
 
 }
 
-
-
+// Initial EDF Heap and set Idle task as the zero position of the heap.
 void EDFHeapInit()
 {
+    edf_heap = (TASK_PAIR*)malloc((OS_MAX_TASKS + 1) * sizeof(TASK_PAIR));
+    edf_heap_info = (EDF_HEAP_INFO*)malloc(1 * sizeof(EDF_HEAP_INFO));
+
+    if (edf_heap == NULL | edf_heap_info == NULL)
+    {
+        printf("EDF HEAP malloc failed !!! \n");
+    }
+    else
+    {
+        printf("EDF HEAP malloc success !!! \n");
+    }
+
+    edf_heap_info->num_item = 0;
+    edf_heap_info->size = OS_MAX_TASKS + 1;
+
+    for (int edf_heap_id = 0; edf_heap_id < edf_heap_info->size; edf_heap_id++)
+    {
+        edf_heap[edf_heap_id].task_id = 0;
+        edf_heap[edf_heap_id].deadline = 0;
+    }
+
+    // Assign the heap[0] as Idle task.
+    edf_heap[0].task_id = 63;
 
 
-
+    printf("EDF HEAP INIT DONE !!! \n");
 
 }
 

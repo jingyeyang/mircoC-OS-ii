@@ -710,9 +710,8 @@ void  OSIntExit (void)
                 OS_SchedNew();
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
 #else
-
                 OS_ENTER_CRITICAL();
-                if (fifo_q_info->num_item == 0)         // there is no task in the waiting queue, execute the Idle task
+                if (edf_heap_info -> num_item == 0)         // there is no task in the waiting queue, execute the Idle task
                 {
                     if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
                     {
@@ -722,14 +721,17 @@ void  OSIntExit (void)
                 }
                 else
                 {
-                    if (OSTCBCur->OSTCBId == OS_TASK_IDLE_ID)
+                    if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
                     {
-                        OSPrioHighRdy = fifo_queue[fifo_q_info->end];
-                        fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
-                        fifo_q_info->num_item--;
+                        EDFHeapDelete();
+                        OSPrioHighRdy = edf_heap[1].task_id;
                         OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
                     }
-
+                    else
+                    {
+                        OSPrioHighRdy = edf_heap[1].task_id;
+                        OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+                    }
                 }
                 OS_EXIT_CRITICAL();
                 
@@ -819,7 +821,6 @@ void  OSIntExit (void)
                     }
 #endif /* M11102155_PA1_PART_2_RM */
 
-
 #ifdef M11102155_PA2_PART_1_EDF
                     if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
                     {
@@ -828,11 +829,32 @@ void  OSIntExit (void)
 
                         // Do delay !!! 
                         INT32U ticks = OSTCBCur->deadline_time - OSTime;
+                        //printf("TICK %d    TASK %d's delay = %d\n", OSTime, OSTCBCur->OSTCBId, ticks);
                         if (ticks > 0u) {                            /* 0 means no delay!                                  */
                             OS_ENTER_CRITICAL();
                             OS_TRACE_TASK_SUSPENDED(OSTCBCur);
                             OSTCBCur->OSTCBDly = ticks;              /* Load ticks in TCB                                  */
                             OS_TRACE_TASK_DLY(ticks);
+                            OS_EXIT_CRITICAL();
+                        }
+                        else
+                        {
+                            // If the task arrive after it complete immediately.
+                            //printf("TICK %d hahaha TASK %d \n", OSTime, OSTCBCur->OSTCBId);
+                            OS_ENTER_CRITICAL();
+                            OSTCBCur->arrive_time = OSTime;
+                            OSTCBCur->num_recent_execute_time = 0;
+                            OSTCBCur->deadline_time = OSTCBCur->arrive_time + OSTCBCur->period;
+
+                            if (edf_heap_info->num_item != edf_heap_info->size)
+                            {
+                                EDFHeapInsert(OSTCBCur->OSTCBId, OSTCBCur->deadline_time);
+                            }
+                            else
+                            {
+                                printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
+                            }
+
                             OS_EXIT_CRITICAL();
                         }
 
@@ -841,6 +863,14 @@ void  OSIntExit (void)
                             printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
                                 (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                             fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            OSTCBCur->num_times_job++;
+                        }
+                        else
+                        {
+                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
                                 (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                             OSTCBCur->num_times_job++;
                         }
@@ -858,6 +888,11 @@ void  OSIntExit (void)
                             {
                                 printf("%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
                                 fprintf(Output_fp, "%2d\t Preemption \t task(%2d)        \t task(%2d)(%2d)  \n", OSTime, 63, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                            }
+                            else if(OSTCBCur->OSTCBPrio != OSTCBHighRdy -> OSTCBPrio)
+                            {
+                                printf("%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)(%2d)  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
+                                fprintf(Output_fp, "%2d\t Preemption \t task(%2d)(%2d)   \t task(%2d)(%2d)  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job);
                             }
                         }
                     }
@@ -1049,16 +1084,28 @@ void  OSStart (void)
 
         OS_ENTER_CRITICAL();
         // finding the next high priority task.
-        if (fifo_q_info->num_item != 0)
+        //if (fifo_q_info->num_item != 0)
+        //{
+        //    OSPrioHighRdy = fifo_queue[fifo_q_info->end];
+        //    fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
+        //    fifo_q_info->num_item--;
+        //}
+        //else
+        //{
+        //    OSPrioHighRdy = 63;
+        //}
+            
+        if (edf_heap_info->num_item != 0)
         {
-            OSPrioHighRdy = fifo_queue[fifo_q_info->end];
-            fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
-            fifo_q_info->num_item--;
+            OSPrioHighRdy = edf_heap[1].task_id;        // Get the top task with minimum deadline of the EDF heap.
         }
         else
         {
-            OSPrioHighRdy = 63;
+            OSPrioHighRdy = edf_heap[0].task_id;        // If there exist no task in EDF heap, just execute the idle task.
         }
+    
+
+
         OS_EXIT_CRITICAL();
 
         OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
@@ -1138,9 +1185,11 @@ void  OSTimeTick (void)
 #endif
 
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
+
     // At each end of tick add number of tick that a task execute.
     OSTCBCur->num_recent_execute_time++;
     //printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
+
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
@@ -1162,12 +1211,13 @@ void  OSTimeTick (void)
     OS_TCB* check_violate_ptcb = OSTCBList;
     while (check_violate_ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
     {
-        if (OSTime > check_violate_ptcb->deadline_time)
+        if (OSTime > check_violate_ptcb->deadline_time && check_violate_ptcb -> OSTCBDly == 0u)
         {   
             //printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
+            //printf("TICK = %d ..... Task %d 's deadline = %d \n", OSTime, check_violate_ptcb->OSTCBId, check_violate_ptcb->deadline_time);
             // It violate at the last Time tick.
-            printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-            fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t -------------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+            printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+            fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
             fclose(Output_fp);           // Close the output file.
             exit(1);
         }
@@ -1229,27 +1279,24 @@ void  OSTimeTick (void)
 #ifndef M11102155_PA2_PART_1_EDF
                         OSRdyGrp               |= ptcb->OSTCBBitY;             /* No,  Make ready          */
                         OSRdyTbl[ptcb->OSTCBY] |= ptcb->OSTCBBitX;
-#else
-
-                    if (fifo_q_info->num_item != fifo_q_info->size)
-                    {
-                        fifo_queue[fifo_q_info->front] = ptcb ->OSTCBId;
-                        fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
-                        fifo_q_info->num_item++;
-                    }
-                    else
-                    {
-                        printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
-                    }
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
-                        OS_ENTER_CRITICAL();
+                        //OS_ENTER_CRITICAL();
                         ptcb->arrive_time = OSTime;
                         ptcb->num_recent_execute_time = 0;
                         ptcb->deadline_time = ptcb->arrive_time + ptcb->period;
-                        OS_EXIT_CRITICAL();
+                        
+                        if (edf_heap_info->num_item != edf_heap_info->size)
+                        {
+                            EDFHeapInsert(ptcb->OSTCBId, ptcb->deadline_time);
+                        }
+                        else
+                        {
+                            printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
+                        }
+                        //OS_EXIT_CRITICAL();
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
                         OS_TRACE_TASK_READY(ptcb);
@@ -1971,12 +2018,10 @@ void  OS_Sched (void)
 #else
 
             OS_ENTER_CRITICAL();
-            if (fifo_q_info->num_item != 0)
+            if (edf_heap_info->num_item != 0)
             {
 
-                OSPrioHighRdy = fifo_queue[fifo_q_info->end];
-                fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
-                fifo_q_info->num_item--;
+                OSPrioHighRdy = edf_heap[1].task_id;        
             }
             else
             {
@@ -2035,7 +2080,7 @@ void  OS_Sched (void)
                         OSTCBHighRdy->num_times_job, OSTCBCur->response_time, (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
                 }
                 OSTCBCur->num_times_job++;
-#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
+#endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */ 
 
                 OS_TASK_SW();                          /* Perform a context switch                     */
             }
@@ -2551,16 +2596,27 @@ INT8U  OS_TCBInit (INT8U    prio,
         {
             if (task_parameter->TaskArriveTime == 0)
             {
-                if (fifo_q_info->num_item != fifo_q_info->size)
+                //if (fifo_q_info->num_item != fifo_q_info->size)
+                //{
+                //    fifo_queue[fifo_q_info->front] = task_parameter->TaskID;
+                //    fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
+                //    fifo_q_info->num_item++;
+                //}
+                //else
+                //{
+                //    printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
+                //}
+
+                if (edf_heap_info->num_item != edf_heap_info->size)
                 {
-                    fifo_queue[fifo_q_info->front] = task_parameter->TaskID;
-                    fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
-                    fifo_q_info->num_item++;
+                    EDFHeapInsert(task_parameter->TaskID, ptcb->deadline_time);
                 }
                 else
                 {
-                    printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
+                    printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
                 }
+
+
             }
         }
         // consider ilde task or not ? 
