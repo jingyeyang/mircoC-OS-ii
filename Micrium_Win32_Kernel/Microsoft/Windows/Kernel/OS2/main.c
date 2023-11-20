@@ -137,13 +137,7 @@ int  main (void)
     }
     printf("donw insert CUS queue!!!\n");
 
-    int test_q_ptr = cus_fifo_q_info -> end;
-    while(test_q_ptr != cus_fifo_q_info -> front)
-    {
-        //printf("%d job in the CUS FIFO QUEUE : \n");
-        printf("  job id = %d, arrive time = %d, execution time = %d, user defined deadline = %d\n", cus_fifo_q[test_q_ptr].job_id, cus_fifo_q[test_q_ptr].arrive_time, cus_fifo_q[test_q_ptr].execution_time, cus_fifo_q[test_q_ptr].user_define_deadline);
-        test_q_ptr++;
-    }
+
 
 
 #endif /* M11102155_PA2_PART_2_CUS */
@@ -222,13 +216,40 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
+    printf("========== Check data structure ==========\n");
 
-    printf(" after task create :: \n");
+    printf(" ------ After task create task store in EDF minimum heap ----- \n");
     for (int edf_heap_id = 1; edf_heap_id <= edf_heap_info->num_item; edf_heap_id++)
     {
         printf("< %d, %d >\n", edf_heap[edf_heap_id].task_id, edf_heap[edf_heap_id].deadline);
     }
 
+
+    printf("----- Periodic Task (include general task and server task) in the TCB ----- \n");
+    OS_TCB* ptcb = OSTCBList;
+    while (ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
+    {
+        if (ptcb->server_or_not)
+        {
+            printf(" Server        : TASK ID = %d, server size = %d percent\n", ptcb->OSTCBId, ptcb->server_size);
+        }
+        else
+        {
+            printf(" General TASK  : TASK ID = %d, arrive time = %d\n", ptcb->OSTCBId, ptcb->arrive_time);
+        }
+        ptcb = ptcb->OSTCBNext;
+    }
+
+    printf("----- Aperiodic/Sporadic in CUS FIFO queue -----\n");
+    int test_q_ptr = cus_fifo_q_info->end;
+    while (test_q_ptr != cus_fifo_q_info->front)
+    {
+        //printf("%d job in the CUS FIFO QUEUE : \n");
+        printf("  job id = %d, arrive time = %d, execution time = %d, user defined deadline = %d\n", cus_fifo_q[test_q_ptr].job_id, cus_fifo_q[test_q_ptr].arrive_time, cus_fifo_q[test_q_ptr].execution_time, cus_fifo_q[test_q_ptr].user_define_deadline);
+        test_q_ptr++;
+    }
+
+    printf("==========================================\n");
 
 #endif /* M11102155_PA2_PART_1_EDF */
 

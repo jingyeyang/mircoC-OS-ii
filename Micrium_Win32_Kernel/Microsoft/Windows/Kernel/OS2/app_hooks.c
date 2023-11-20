@@ -260,8 +260,8 @@ void InputFile()
             //printf("Info : %d\n", TaskInfo[i]);
             if (i == 0)
             {
-                cus_job_number++;
                 cus_job_parameter[j].TaskID = cus_job_number;
+                cus_job_number++;
                 //printf(" cus_job_number %d\n ", cus_job_number);
             }
             else if (i == 1)

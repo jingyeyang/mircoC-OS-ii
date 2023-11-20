@@ -1,37 +1,5 @@
-﻿  os_cpu_c.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c(627,1): warning C4067: 未預期的語彙基元，接著前置處理器指示詞 - 必須是新行
-  os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(727,52): warning C4244: '=': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(732,52): warning C4244: '=': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1100,40): warning C4244: '=': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1104,40): warning C4244: '=': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1222,13): warning C4013: 'exit' 未定義; 假設 extern 傳回整數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2024,44): warning C4244: '=': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2528,16): warning C4101: 'num_recent_execute_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2527,16): warning C4101: 'num_times_job': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2529,16): warning C4101: 'total_execute_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2531,16): warning C4101: 'deadline_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2530,16): warning C4101: 'arrive_time': 未參考的區域變數
-  os_dbg_r.c
-  os_flag.c
-  os_mbox.c
-  os_mem.c
-  os_mutex.c
-  os_q.c
-  os_sem.c
-  os_task.c
-  os_time.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_time.c(57,16): warning C4101: 'y': 未參考的區域變數
-  os_tmr.c
-  app_hooks.c
+﻿  app_hooks.c
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(221,27): warning C4013: 'atoi' 未定義; 假設 extern 傳回整數
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(366,28): warning C4013: 'malloc' 未定義; 假設 extern 傳回整數
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(369,49): warning C4554: '|': 檢查運算子優先順序找出可能發生的錯誤; 使用括號釐清順序
-  main.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(153,16): warning C4013: 'malloc' 未定義; 假設 extern 傳回整數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(153,14): warning C4047: '=': 'OS_STK **' 與 'int' 間接取值的層級不同
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(159,21): warning C4047: '=': 'OS_STK *' 與 'int' 間接取值的層級不同
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(217,29): warning C4244: '函式': 將 'INT16U' 轉換為 'INT8U'，由於類型不同，可能導致資料遺失
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': 未參考的區域變數
-  正在產生程式碼...
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe

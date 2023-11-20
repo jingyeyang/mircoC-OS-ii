@@ -2577,16 +2577,16 @@ INT8U  OS_TCBInit (INT8U    prio,
 
         if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
         {
-            if (ptcb->server_or_not)        // means it is CUS server.
+            if (ptcb->server_or_not)        // Means it is CUS server.
             {
-                ptcb->num_times_job = 0u;
-                ptcb->num_recent_execute_time = 0u;
+                ptcb->num_times_job = 0u;       
+                ptcb->num_recent_execute_time = 0u;     // The recording here is for storing the aperiodic/sporadic jobs's informations.
                 ptcb->total_execute_time = 0u;
                 ptcb->arrive_time = 0u;
                 ptcb->period = 0u;
                 ptcb->deadline_time = 0u;
             }
-            else        // means this is general task.
+            else        // Means this is general task.
             {
                 ptcb->num_times_job = 0u;
                 ptcb->num_recent_execute_time = 0u;
