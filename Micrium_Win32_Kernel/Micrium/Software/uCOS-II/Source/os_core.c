@@ -1084,17 +1084,6 @@ void  OSStart (void)
 
         OS_ENTER_CRITICAL();
         // finding the next high priority task.
-        //if (fifo_q_info->num_item != 0)
-        //{
-        //    OSPrioHighRdy = fifo_queue[fifo_q_info->end];
-        //    fifo_q_info->end = ((fifo_q_info->end + 1) % (TASK_NUMBER + 1));
-        //    fifo_q_info->num_item--;
-        //}
-        //else
-        //{
-        //    OSPrioHighRdy = 63;
-        //}
-            
         if (edf_heap_info->num_item != 0)
         {
             OSPrioHighRdy = edf_heap[1].task_id;        // Get the top task with minimum deadline of the EDF heap.
@@ -1104,8 +1093,6 @@ void  OSStart (void)
             OSPrioHighRdy = edf_heap[0].task_id;        // If there exist no task in EDF heap, just execute the idle task.
         }
     
-
-
         OS_EXIT_CRITICAL();
 
         OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy]; /* Point to highest priority task ready to run    */
@@ -1211,18 +1198,60 @@ void  OSTimeTick (void)
     OS_TCB* check_violate_ptcb = OSTCBList;
     while (check_violate_ptcb->OSTCBPrio != OS_TASK_IDLE_PRIO)
     {
-        if (OSTime > check_violate_ptcb->deadline_time && check_violate_ptcb -> OSTCBDly == 0u)
-        {   
-            //printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
-            //printf("TICK = %d ..... Task %d 's deadline = %d \n", OSTime, check_violate_ptcb->OSTCBId, check_violate_ptcb->deadline_time);
-            // It violate at the last Time tick.
-            printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-            fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-            fclose(Output_fp);           // Close the output file.
-            exit(1);
+#ifdef M11102155_PA2_PART_2_CUS
+        if (!check_violate_ptcb->server_or_not)     // Consider general task missing deadline or not.
+#endif /* M11102155_PA2_PART_2_CUS */
+        {
+            if (OSTime > check_violate_ptcb->deadline_time && check_violate_ptcb->OSTCBDly == 0u)
+            {
+                //printf("Tick %d : Task %d violate !!!\n", OSTime, check_violate_ptcb->OSTCBId);
+                //printf("TICK = %d ..... Task %d 's deadline = %d \n", OSTime, check_violate_ptcb->OSTCBId, check_violate_ptcb->deadline_time);
+                // It violate at the last Time tick.
+                printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+                //fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+                //fclose(Output_fp);           // Close the output file.
+                exit(1);
+            }
         }
+#ifdef M11102155_PA2_PART_2_CUS
+        else        // Condiser about the CUS server side.
+        {
+            // SERVER DEADLINE ::
+            // Consider whether the running aperiodic/sporadic job miss it's server deadline (consider the server task)
+            if ((check_violate_ptcb -> total_execute_time != 0) && (check_violate_ptcb -> arrive_time != 0))    // Means there exist a running aperiodic/sporadic job.
+            {
+                if (OSTime > check_violate_ptcb->deadline_time)
+                {
+                    printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+                    printf("%2d\t Aperiodic job(%d) MissDeadline \t (Server deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[cus_fifo_q_info->end].job_id);
+                }
+            }
+
+        }
+#endif /* M11102155_PA2_PART_2_CUS */
+
+
         check_violate_ptcb = check_violate_ptcb->OSTCBNext;
     }
+
+#ifdef M11102155_PA2_PART_2_CUS
+
+    // USER DEFINED DEADLINE (ABSOLUTE DEADLINE) ::
+    // Consider whether aperiodic/sporadic job miss there user define deadline (traverse CUS FIFO queue)
+    //printf("check absolute deadline \n");
+    int check_violate_q_ptr = cus_fifo_q_info->end;
+    while (check_violate_q_ptr != cus_fifo_q_info->front)
+    {
+        if (OSTime > cus_fifo_q[check_violate_q_ptr].user_define_deadline)
+        {
+            printf("%2d\t Aperiodic job(%d) MissDeadline \t (Absolute deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[check_violate_q_ptr].job_id);
+        }
+        check_violate_q_ptr++;
+    }
+
+#endif /* M11102155_PA2_PART_2_CUS */
+
+
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
 

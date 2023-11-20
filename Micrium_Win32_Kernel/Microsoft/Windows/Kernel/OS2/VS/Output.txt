@@ -1,0 +1,5 @@
+ 2	 Completion 	 task( 2)( 0)   	 task( 1)( 0)        	  2 	  0 	  3  
+ 7	 Completion 	 task( 1)( 0)   	 task( 2)( 1)        	  7 	  2 	  3  
+ 9	 Completion 	 task( 2)( 1)   	 task(63)       	  4 	  2 	  1
+10	 Preemption 	 task(63)        	 task( 2)( 2)  
+12	 Completion 	 task( 2)( 2)   	 task( 1)( 1)        	  2 	  0 	  3  
