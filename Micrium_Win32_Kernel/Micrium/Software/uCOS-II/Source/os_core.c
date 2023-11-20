@@ -2427,6 +2427,8 @@ INT8U  OS_TCBInit (INT8U    prio,
 #endif /* M11102155_PA1_PART_2_RM */
 
 #else
+
+#ifndef M11102155_PA2_PART_2_CUS
         if (p_arg != 0)
         {
             //ptcb->OSTCBStat = OS_STAT_SUSPEND;
@@ -2438,6 +2440,28 @@ INT8U  OS_TCBInit (INT8U    prio,
         {
             ptcb->OSTCBDly = 0u;
         }
+#else
+
+        if (p_arg != 0)
+        {
+            if ((task_parameter->TaskExecutionTime != 0) && (task_parameter->TaskPeriodic != 0))         // means this is a general task.
+            {
+                ptcb->server_or_not = 0;
+                //  Cuase task have arrive time, we set the task delay 
+                ptcb->OSTCBDly = (INT32U)(task_parameter->TaskArriveTime);
+            }
+            else    // means this is the server !!!
+            {
+                ptcb->server_or_not = 1;
+                ptcb->server_size = task_parameter->TaskArriveTime;
+            }
+        }
+        else
+        {
+            ptcb->OSTCBDly = 0u;
+        }
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
@@ -2524,6 +2548,8 @@ INT8U  OS_TCBInit (INT8U    prio,
 
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
 
+#ifndef M11102155_PA2_PART_2_CUS
+
         INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
         INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
         INT16U total_execute_time;            // Records the worst-case execution time of the task.
@@ -2540,6 +2566,41 @@ INT8U  OS_TCBInit (INT8U    prio,
             ptcb->period = task_parameter->TaskPeriodic;
             ptcb->deadline_time = (ptcb->arrive_time) + (ptcb->period);
         }
+#else
+
+        INT16U num_times_job;                 // Records the number of times (assume j) this task occurs periodically.
+        INT16U num_recent_execute_time;       // Records the time (in ticks) that the task has executed at time j.
+        INT16U total_execute_time;            // Records the worst-case execution time of the task.
+        INT16U arrive_time;                   // Records the arrival time of the task at time j.
+        INT16U deadline_time;                 // Records the deadline of the task at time j.
+
+
+        if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
+        {
+            if (ptcb->server_or_not)        // means it is CUS server.
+            {
+                ptcb->num_times_job = 0u;
+                ptcb->num_recent_execute_time = 0u;
+                ptcb->total_execute_time = 0u;
+                ptcb->arrive_time = 0u;
+                ptcb->period = 0u;
+                ptcb->deadline_time = 0u;
+            }
+            else        // means this is general task.
+            {
+                ptcb->num_times_job = 0u;
+                ptcb->num_recent_execute_time = 0u;
+                ptcb->total_execute_time = task_parameter->TaskExecutionTime;
+                ptcb->arrive_time = task_parameter->TaskArriveTime;
+                ptcb->period = task_parameter->TaskPeriodic;
+                ptcb->deadline_time = (ptcb->arrive_time) + (ptcb->period);
+            }
+        }
+
+
+
+#endif /* M11102155_PA2_PART_2_CUS */
+
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */     
 
 
@@ -2596,17 +2657,6 @@ INT8U  OS_TCBInit (INT8U    prio,
         {
             if (task_parameter->TaskArriveTime == 0)
             {
-                //if (fifo_q_info->num_item != fifo_q_info->size)
-                //{
-                //    fifo_queue[fifo_q_info->front] = task_parameter->TaskID;
-                //    fifo_q_info->front = ((fifo_q_info->front + 1) % (TASK_NUMBER + 1));
-                //    fifo_q_info->num_item++;
-                //}
-                //else
-                //{
-                //    printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
-                //}
-
                 if (edf_heap_info->num_item != edf_heap_info->size)
                 {
                     EDFHeapInsert(task_parameter->TaskID, ptcb->deadline_time);
@@ -2615,11 +2665,8 @@ INT8U  OS_TCBInit (INT8U    prio,
                 {
                     printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
                 }
-
-
             }
         }
-        // consider ilde task or not ? 
 
 #endif /* M11102155_PA2_PART_1_EDF */
 

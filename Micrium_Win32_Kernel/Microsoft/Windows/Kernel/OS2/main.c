@@ -124,6 +124,30 @@ int  main (void)
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
+#ifdef M11102155_PA2_PART_2_CUS 
+
+    // Init CUS FIFO queue.
+    CUSQInit();
+
+    // Insert the aperiodic job into CUS FIFO queue.
+    int job_id;
+    for (job_id = 0; job_id < cus_job_number; job_id++)
+    {
+        CUSQInsert(cus_job_parameter[job_id].TaskID, cus_job_parameter[job_id].TaskArriveTime, cus_job_parameter[job_id].TaskExecutionTime, cus_job_parameter[job_id].JobDeadline);
+    }
+    printf("donw insert CUS queue!!!\n");
+
+    int test_q_ptr = cus_fifo_q_info -> end;
+    while(test_q_ptr != cus_fifo_q_info -> front)
+    {
+        //printf("%d job in the CUS FIFO QUEUE : \n");
+        printf("  job id = %d, arrive time = %d, execution time = %d, user defined deadline = %d\n", cus_fifo_q[test_q_ptr].job_id, cus_fifo_q[test_q_ptr].arrive_time, cus_fifo_q[test_q_ptr].execution_time, cus_fifo_q[test_q_ptr].user_define_deadline);
+        test_q_ptr++;
+    }
+
+
+#endif /* M11102155_PA2_PART_2_CUS */
+
 
     /* Dynamic Create the Stack size */
     Task_STK = malloc(TASK_NUMBER * sizeof(int*));
@@ -184,6 +208,7 @@ int  main (void)
 // Set task ID as priority.
 #ifdef M11102155_PA2_PART_1_EDF
 
+    printf(" NUMEBER OF task == %d\n", TASK_NUMBER);
     for (n = 0; n < TASK_NUMBER; n++)
     {
         OSTaskCreateExt(task,

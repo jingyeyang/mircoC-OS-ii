@@ -110,6 +110,8 @@ void OutFileInit()
     }
 }
 
+#ifndef M11102155_PA2_PART_2_CUS
+
 void InputFile()
 {
     /*
@@ -174,7 +176,119 @@ void InputFile()
     /* read file */
 }
 
+#else
+void InputFile()
+{
+    /*
+    *  Read file
+    *  Task Information :
+    *  Task_ID ArriveTime ExecutionTime Periodic
+    */
 
+    errno_t err;
+    if ((err = fopen_s(&fp, INPUT_FILE_NAME, "r")) == 0)
+    {
+        printf("The file 'TaskSet.txt' was opened\n");
+    }
+    else
+    {
+        printf("The file 'TaskSet.txt' was not opened\n");
+    }
+
+    if ((err = fopen_s(&fp_cus, CUS_INTPUT_FILE_NAME, "r")) == 0)
+    {
+        printf("The file 'AperiodicJobs.txt' was opened\n");
+    }
+    else
+    {
+        printf("The file 'AperiodicJobs.txt' was not opened\n");
+    }
+
+    char str[MAX];
+    char* ptr;
+    char* pTmp = NULL;
+    int TaskInfo[INFO], i, j = 0;
+    TASK_NUMBER = 0;
+
+    while (!feof(fp))
+    {
+        i = 0;
+        memset(str, 0, sizeof(str));
+        fgets(str, sizeof(str) - 1, fp);
+        ptr = strtok_s(str, " ", &pTmp);
+        while (ptr != NULL)
+        {
+            TaskInfo[i] = atoi(ptr);
+            ptr = strtok_s(NULL, " ", &pTmp);
+            //printf("Info : %d\n", TaskInfo[i]);
+            if (i == 0)
+            {
+                TASK_NUMBER++;
+                TaskParameter[j].TaskID = TASK_NUMBER;
+            }
+            else if (i == 1)
+            {
+                TaskParameter[j].TaskArriveTime = TaskInfo[i];
+            }
+            else if (i == 2)
+            {
+                TaskParameter[j].TaskExecutionTime = TaskInfo[i];
+            }
+            else if (i == 3)
+            {
+                TaskParameter[j].TaskPeriodic = TaskInfo[i];
+            }
+            i++;
+        }
+        /* Initial Priority */
+        TaskParameter[j].TaskPriority = j;
+        j++;
+    }
+
+    cus_job_number = 0;
+    i, j = 0;
+    while (!feof(fp_cus))
+    {
+        i = 0;
+        memset(str, 0, sizeof(str));
+        fgets(str, sizeof(str) - 1, fp_cus);
+        ptr = strtok_s(str, " ", &pTmp);
+        while (ptr != NULL)
+        {
+            TaskInfo[i] = atoi(ptr);
+            ptr = strtok_s(NULL, " ", &pTmp);
+            //printf("Info : %d\n", TaskInfo[i]);
+            if (i == 0)
+            {
+                cus_job_number++;
+                cus_job_parameter[j].TaskID = cus_job_number;
+                //printf(" cus_job_number %d\n ", cus_job_number);
+            }
+            else if (i == 1)
+            {
+                cus_job_parameter[j].TaskArriveTime = TaskInfo[i];
+            }
+            else if (i == 2)
+            {
+                cus_job_parameter[j].TaskExecutionTime = TaskInfo[i];
+            }
+            else if (i == 3)
+            {
+                cus_job_parameter[j].JobDeadline = TaskInfo[i];
+            }
+            i++;
+        }
+        /* Initial Priority */
+        cus_job_parameter[j].TaskPriority = j;
+        j++;
+    }
+
+    fclose(fp);
+    fclose(fp_cus);
+    /* read file */
+}
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 #ifdef M11102155_PA2_PART_1_EDF
 
@@ -280,6 +394,62 @@ void EDFHeapInit()
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
+
+#ifdef M11102155_PA2_PART_2_CUS
+//INT16U job_id;
+//INT16U arrive_time;
+//INT16U execution_time;
+//INT16U user_define_deadline;
+
+//INT16U TaskID;
+//INT16U TaskArriveTime;
+//INT16U TaskExecutionTime;
+//INT16U TaskPeriodic;
+//INT16U TaskNumber;
+//INT16U TaskPriority;
+
+void CUSQInsert(INT16U job_id, INT16U arrive_time, INT16U execution_time, INT16U deadline)
+{
+    printf("......... %d %d %d %d\n", job_id, arrive_time, execution_time, deadline);
+    if (cus_fifo_q_info->num_item != cus_fifo_q_info->size)
+    {
+        cus_fifo_q[cus_fifo_q_info->front].job_id = job_id;
+        cus_fifo_q[cus_fifo_q_info->front].arrive_time = arrive_time;
+        cus_fifo_q[cus_fifo_q_info->front].execution_time = execution_time;
+        cus_fifo_q[cus_fifo_q_info->front].user_define_deadline = deadline;
+        cus_fifo_q_info->front++;
+        cus_fifo_q_info->num_item++;
+    }
+    else
+    {
+        printf("ERROR : os_core.c ... FIFO QUEUE overflow !!!\n");
+    }
+}
+
+void CUSQInit()
+{
+    cus_fifo_q = (CUS_FIFO_Q_NODE*)malloc((OS_MAX_TASKS + 1) * sizeof(CUS_FIFO_Q_NODE));
+    cus_fifo_q_info = (CUS_FIFO_Q_INFO*)malloc(1 * sizeof(CUS_FIFO_Q_INFO));
+
+    if ((cus_fifo_q == NULL) | (cus_fifo_q_info == NULL))
+    {
+        printf("CUS FIFO Q malloc failed !!! \n");
+    }
+    else
+    {
+        printf("CUS FIFO Q success !!! \n");
+    }
+
+    cus_fifo_q_info->front = 0;
+    cus_fifo_q_info->end = 0;
+    cus_fifo_q_info->num_item = 0;
+    cus_fifo_q_info->size = (OS_MAX_TASKS + 1);
+
+    printf("END OF FIFO QUEUE INIT !!!\n");
+}
+
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 
 

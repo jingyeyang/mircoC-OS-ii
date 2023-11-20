@@ -37,6 +37,7 @@
 //#define M11102155_PA1_PART_2_RM
 //#define M11102155_PA1_PART_3_FIFO
 #define M11102155_PA2_PART_1_EDF
+#define M11102155_PA2_PART_2_CUS
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,14 +78,35 @@ extern "C" {
 #define SYSTEM_END_TIME 30
 #endif /* M11102155_PA2_PART_1_EDF */
 
+#ifndef M11102155_PA2_PART_2_CUS
 
 /* Input File */
 FILE* fp;
+
+#else
+
+/* Input File */
+    FILE* fp;
+// CUS Input File
+    FILE* fp_cus;
+
+#endif /* M11102155_PA2_PART_2_CUS */
+
+
+
+#ifndef M11102155_PA2_PART_2_CUS
 
 #ifdef M11102155_PA2_PART_1_EDF
 #define INPUT_FILE_NAME "./EDF/TaskSet1.txt"
 //#define INPUT_FILE_NAME "./TaskSet.txt"
 #endif /* M11102155_PA2_PART_1_EDF */
+#else
+
+#define CUS_INTPUT_FILE_NAME "./CUS/AperiodicJobs.txt"
+#define INPUT_FILE_NAME "./CUS/TaskSet.txt"
+
+#endif /* M11102155_PA2_PART_2_CUS */
+
 
 
 #ifdef M11102155_PA1_PART_3_FIFO
@@ -104,7 +126,7 @@ FILE* fp;
 
 #define OUTPUT_FILE_NAME "./Output.txt"
 #define MAX 20      // Task maximum number
-#define INFO 4      // information of task
+#define INFO 30      // information of task
 /* Input File */
 
 /* Output File */
@@ -121,6 +143,12 @@ typedef struct task_para_set
     INT16U TaskPeriodic;
     INT16U TaskNumber;
     INT16U TaskPriority;
+
+#ifdef M11102155_PA2_PART_2_CUS
+    INT16U JobDeadline;
+#endif /* M11102155_PA2_PART_2_CUS */
+
+
 }task_para_set;
 
 int TASK_NUMBER;        // Number of the input tasks
@@ -131,6 +159,13 @@ OS_STK** Task_STK;
 
 /* Create Task */
 task_para_set TaskParameter[OS_MAX_TASKS];
+
+#ifdef M11102155_PA2_PART_2_CUS
+
+int cus_job_number;
+task_para_set cus_job_parameter[OS_MAX_TASKS];          // Create Server Job record.
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 
 #ifdef M11102155_PA2_PART_1_EDF
@@ -152,7 +187,30 @@ TASK_PAIR* edf_heap;
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
+#ifdef M11102155_PA2_PART_2_CUS
 
+typedef struct CUS_FIFO_Q_NODE
+{
+    INT16U job_id;
+    INT16U arrive_time;
+    INT16U execution_time;
+    INT16U user_define_deadline;
+}CUS_FIFO_Q_NODE;
+
+
+typedef struct CUS_FIFO_Q_INFO
+{
+    INT16U front;
+    INT16U end;
+    INT16U num_item;
+    INT16U size;
+
+}CUS_FIFO_Q_INFO;
+
+CUS_FIFO_Q_INFO* cus_fifo_q_info;
+CUS_FIFO_Q_NODE* cus_fifo_q;
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 
 #ifdef   OS_GLOBALS
@@ -756,6 +814,14 @@ typedef struct os_tcb {
     */
 
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
+
+
+#ifdef M11102155_PA2_PART_2_CUS
+    
+    BOOLEAN server_or_not;      // 0 : general task, 1 : server.
+    INT16U server_size;         // recording the server size.
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
 } OS_TCB;
 
@@ -1598,11 +1664,16 @@ void        InputFile                 (void);
 
 void        EDFHeapSwap(TASK_PAIR* a, TASK_PAIR* b);
 void        EDFHeapify(int location);
-void        EDFHeapDelete();
+void        EDFHeapDelete(void);
 void        EDFHeapInsert(INT16U insert_task_id, INT16U insert_task_deadline);
 void        EDFHeapInit(void);
 
 #endif /* M11102155_PA2_PART_1_EDF */
+
+#ifdef M11102155_PA2_PART_2_CUS 
+void        CUSQInsert(INT16U job_id, INT16U arrive_time, INT16U execution_time, INT16U deadline);
+void        CUSQInit(void);
+#endif /* M11102155_PA2_PART_2_CUS */
 
 
 /*
