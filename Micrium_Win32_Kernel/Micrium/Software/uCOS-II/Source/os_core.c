@@ -822,6 +822,7 @@ void  OSIntExit (void)
 #endif /* M11102155_PA1_PART_2_RM */
 
 #ifdef M11102155_PA2_PART_1_EDF
+                    //printf("TASK %d num_exe_time = %d, total = %d\n", OSTCBCur->OSTCBId, OSTCBCur->num_recent_execute_time, OSTCBCur->total_execute_time);
                     if (OSTCBCur->num_recent_execute_time == OSTCBCur->total_execute_time)
                     {
                         // Compute response time.
@@ -858,22 +859,61 @@ void  OSIntExit (void)
                             OS_EXIT_CRITICAL();
                         }
 
-                        if (OSTCBHighRdy->OSTCBPrio == 63)
+#ifdef M11102155_PA2_PART_2_CUS
+
+                        if (!OSTCBCur->server_or_not)
                         {
-                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                            OSTCBCur->num_times_job++;
+#endif /* M11102155_PA2_PART_2_CUS */
+
+                            if (OSTCBHighRdy->OSTCBPrio == 63)
+                            {
+                                printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                OSTCBCur->num_times_job++;
+                            }
+                            else
+                            {
+                                printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                OSTCBCur->num_times_job++;
+                            }
                         }
+#ifdef M11102155_PA2_PART_2_CUS
                         else
                         {
-                            printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                            fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
-                                (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                            OSTCBCur->num_times_job++;
+                            // AS the aperiodic/sporadic job completed, we must reset the record in CUS (server task).
+                                // print aperiodic/sporadic job is complete.
+                            printf("%2d\t Aperiodic job(%d) is finished. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end - 1].job_id);
+                            fprintf(Output_fp, "%2d\t Aperiodic job(%d) is finished. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end - 1].job_id);
+                                // print informations of context switch.
+                            if (OSTCBHighRdy->OSTCBPrio == 63)
+                            {
+                                printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t N/A  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time));
+                                fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)        \t %2d \t %2d \t N/A  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, 63, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time));
+                                OSTCBCur->num_times_job++;
+                            }
+                            else
+                            {
+                                printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t N/A  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time));
+                                fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t N/A  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time));
+                                OSTCBCur->num_times_job++;
+                            }
+
+                            // Reset CUS (server task).
+                            OSTCBCur->num_recent_execute_time = 0;
+                            OSTCBCur->arrive_time = 0;
+                            OSTCBCur->total_execute_time = 0;
+
                         }
+#endif /* M11102155_PA2_PART_2_CUS */
                     }
                     else
                     {
@@ -1208,13 +1248,13 @@ void  OSTimeTick (void)
                 //printf("TICK = %d ..... Task %d 's deadline = %d \n", OSTime, check_violate_ptcb->OSTCBId, check_violate_ptcb->deadline_time);
                 // It violate at the last Time tick.
                 printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-                //fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-                //fclose(Output_fp);           // Close the output file.
+                fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+                fclose(Output_fp);           // Close the output file.
                 exit(1);
             }
         }
 #ifdef M11102155_PA2_PART_2_CUS
-        else        // Condiser about the CUS server side.
+        else        // Consider about the CUS server side.
         {
             // SERVER DEADLINE ::
             // Consider whether the running aperiodic/sporadic job miss it's server deadline (consider the server task)
@@ -1223,7 +1263,65 @@ void  OSTimeTick (void)
                 if (OSTime > check_violate_ptcb->deadline_time)
                 {
                     printf("%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
-                    printf("%2d\t Aperiodic job(%d) MissDeadline \t (Server deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[cus_fifo_q_info->end].job_id);
+                    //printf("%2d\t Aperiodic job(%d) MissDeadline \t (Server deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[cus_fifo_q_info->end].job_id);
+                    fprintf(Output_fp, "%2d\t MissDeadline \t task(%2d)(%2d)   \t ------------  \n", OSTime - 1, check_violate_ptcb->OSTCBId, check_violate_ptcb->num_times_job);
+                    //fprintf(Output_fp, "%2d\t Aperiodic job(%d) MissDeadline \t (Server deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[cus_fifo_q_info->end].job_id);
+                }
+            }
+
+            // Consider whether aperiodic/sporadic job arrive.
+            if ((OSTime >= cus_fifo_q[cus_fifo_q_info->end].arrive_time) && (OSTime >= check_violate_ptcb->deadline_time))
+            {                
+                // Compute CUS Server deadline.
+                    // Find the maximum start time (previous server deadline v.s. aperiodic/sporadic job's arrive time)
+                INT16U maximum_start_time;
+                if (check_violate_ptcb->deadline_time > cus_fifo_q[cus_fifo_q_info->end].arrive_time)       // Check server deadline less than aperiodic/sporadic job's arrive time or not.
+                {
+                    maximum_start_time = check_violate_ptcb->deadline_time;
+                }
+                else
+                {
+                    maximum_start_time = cus_fifo_q[cus_fifo_q_info->end].arrive_time;
+                }
+
+                    // Compute server deadline of executing aperiodic/sporadic job.
+                float append_time = ((float)cus_fifo_q[cus_fifo_q_info->end].execution_time) / (check_violate_ptcb->server_size);
+                check_violate_ptcb->deadline_time = maximum_start_time + (INT16U)append_time;
+
+                // Context switch aperiodic/sporadic job and server task.
+                check_violate_ptcb->arrive_time = cus_fifo_q[cus_fifo_q_info->end].arrive_time;
+                check_violate_ptcb->num_recent_execute_time = 0;
+                check_violate_ptcb->total_execute_time = cus_fifo_q[cus_fifo_q_info->end].execution_time;
+
+                // Add task 3 into EDF minimum heap.
+                EDFHeapInsert(check_violate_ptcb->OSTCBId, check_violate_ptcb->deadline_time);
+
+                if (OSTime == cus_fifo_q[cus_fifo_q_info->end].arrive_time)
+                {
+                    printf("%2d\t Aperiodic job(%d) arrives and set CUS server's deadline as %2d. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
+                    fprintf(Output_fp, "%2d\t Aperiodic job(%d) arrives and set CUS server's deadline as %2d. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
+                }
+                else
+                {
+                    printf("%2d\t Aperiodic job(%d) set CUS server's deadline as %2d. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
+                    fprintf(Output_fp, "%2d\t Aperiodic job(%d) set CUS server's deadline as %2d. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
+                }
+
+                //printf("SHOW THE EDF HEAP :: \n");
+                //for (int heap_id = 1; heap_id <= edf_heap_info->num_item; heap_id++)
+                //{
+                //    printf(" <%d, %d>\n", edf_heap[heap_id].task_id, edf_heap[heap_id].deadline);
+                //}
+
+                // Remove aperiodic/sporadic job from CUS FIFO queue.
+                cus_fifo_q_info->end++;
+            }
+            else
+            {
+                if (OSTime == cus_fifo_q[cus_fifo_q_info->end].arrive_time)
+                {
+                    printf("%2d\t Aperiodic job(%d) arrives. Do nothing. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
+                    fprintf(Output_fp, "%2d\t Aperiodic job(%d) arrives. Do nothing. \n", OSTime, cus_fifo_q[cus_fifo_q_info->end].job_id, check_violate_ptcb->deadline_time);
                 }
             }
 
@@ -1237,11 +1335,11 @@ void  OSTimeTick (void)
 #ifdef M11102155_PA2_PART_2_CUS
 
     // USER DEFINED DEADLINE (ABSOLUTE DEADLINE) ::
-    // Consider whether aperiodic/sporadic job miss there user define deadline (traverse CUS FIFO queue)
-    //printf("check absolute deadline \n");
+    // Consider whether aperiodic/sporadic job miss there user define deadline (traverse CUS FIFO queue).
     int check_violate_q_ptr = cus_fifo_q_info->end;
     while (check_violate_q_ptr != cus_fifo_q_info->front)
     {
+        // Consider whether aperiodic/sporadic job miss absolute deadline.
         if (OSTime > cus_fifo_q[check_violate_q_ptr].user_define_deadline)
         {
             printf("%2d\t Aperiodic job(%d) MissDeadline \t (Absolute deadline)   \t ------------  \n", OSTime - 1, cus_fifo_q[check_violate_q_ptr].job_id);
@@ -1312,20 +1410,26 @@ void  OSTimeTick (void)
 #endif /* M11102155_PA2_PART_1_EDF */
 
 #if defined (M11102155_PA1_PART_2_RM) | defined (M11102155_PA2_PART_1_EDF)
-                        //OS_ENTER_CRITICAL();
-                        ptcb->arrive_time = OSTime;
-                        ptcb->num_recent_execute_time = 0;
-                        ptcb->deadline_time = ptcb->arrive_time + ptcb->period;
-                        
-                        if (edf_heap_info->num_item != edf_heap_info->size)
+
+#ifdef M11102155_PA2_PART_2_CUS
+                        if (!ptcb->server_or_not)
+#endif /* M11102155_PA2_PART_2_CUS */
                         {
-                            EDFHeapInsert(ptcb->OSTCBId, ptcb->deadline_time);
+                            //OS_ENTER_CRITICAL();
+                            ptcb->arrive_time = OSTime;
+                            ptcb->num_recent_execute_time = 0;
+                            ptcb->deadline_time = ptcb->arrive_time + ptcb->period;
+
+                            if (edf_heap_info->num_item != edf_heap_info->size)
+                            {
+                                EDFHeapInsert(ptcb->OSTCBId, ptcb->deadline_time);
+                            }
+                            else
+                            {
+                                printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
+                            }
+                            //OS_EXIT_CRITICAL();
                         }
-                        else
-                        {
-                            printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
-                        }
-                        //OS_EXIT_CRITICAL();
 #endif /* M11102155_PA1_PART_2_RM | M11102155_PA2_PART_1_EDF */
 
                         OS_TRACE_TASK_READY(ptcb);
@@ -2482,7 +2586,7 @@ INT8U  OS_TCBInit (INT8U    prio,
             else    // means this is the server !!!
             {
                 ptcb->server_or_not = 1;
-                ptcb->server_size = task_parameter->TaskArriveTime;
+                ptcb->server_size = (float)task_parameter->TaskArriveTime / 100;
             }
         }
         else
@@ -2699,8 +2803,6 @@ INT8U  OS_TCBInit (INT8U    prio,
 
 #endif /* M11102155_PA2_PART_1_EDF */
 
-
-        
         
         OSTaskCtr++;                                       /* Increment the #tasks counter             */
 

@@ -195,7 +195,7 @@ void InputFile()
         printf("The file 'TaskSet.txt' was not opened\n");
     }
 
-    if ((err = fopen_s(&fp_cus, CUS_INTPUT_FILE_NAME, "r")) == 0)
+    if ((err = fopen_s(&fp_cus, APERIODIC_FILE_NAME, "r")) == 0)
     {
         printf("The file 'AperiodicJobs.txt' was opened\n");
     }
@@ -396,18 +396,8 @@ void EDFHeapInit()
 
 
 #ifdef M11102155_PA2_PART_2_CUS
-//INT16U job_id;
-//INT16U arrive_time;
-//INT16U execution_time;
-//INT16U user_define_deadline;
 
-//INT16U TaskID;
-//INT16U TaskArriveTime;
-//INT16U TaskExecutionTime;
-//INT16U TaskPeriodic;
-//INT16U TaskNumber;
-//INT16U TaskPriority;
-
+// Insert aperiodic/sporadic job into CUS FIFO queue.
 void CUSQInsert(INT16U job_id, INT16U arrive_time, INT16U execution_time, INT16U deadline)
 {
     printf("......... %d %d %d %d\n", job_id, arrive_time, execution_time, deadline);
@@ -426,6 +416,7 @@ void CUSQInsert(INT16U job_id, INT16U arrive_time, INT16U execution_time, INT16U
     }
 }
 
+// Init the CUS FIFO queue.
 void CUSQInit()
 {
     cus_fifo_q = (CUS_FIFO_Q_NODE*)malloc((OS_MAX_TASKS + 1) * sizeof(CUS_FIFO_Q_NODE));
@@ -447,7 +438,6 @@ void CUSQInit()
 
     printf("END OF FIFO QUEUE INIT !!!\n");
 }
-
 
 #endif /* M11102155_PA2_PART_2_CUS */
 

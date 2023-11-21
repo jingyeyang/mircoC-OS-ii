@@ -102,8 +102,10 @@ FILE* fp;
 #endif /* M11102155_PA2_PART_1_EDF */
 #else
 
-#define CUS_INTPUT_FILE_NAME "./CUS/AperiodicJobs.txt"
-#define INPUT_FILE_NAME "./CUS/TaskSet.txt"
+//#define APERIODIC_FILE_NAME "./CUS/AperiodicJobs.txt"
+//#define INPUT_FILE_NAME "./CUS/TaskSet.txt"
+#define APERIODIC_FILE_NAME "./AperiodicJobs.txt"
+#define INPUT_FILE_NAME "./TaskSet.txt"
 
 #endif /* M11102155_PA2_PART_2_CUS */
 
@@ -189,6 +191,7 @@ TASK_PAIR* edf_heap;
 
 #ifdef M11102155_PA2_PART_2_CUS
 
+// Node in the CUS FIFO queue, for storing informations of aperiodic/sporadic jobs.
 typedef struct CUS_FIFO_Q_NODE
 {
     INT16U job_id;
@@ -197,7 +200,7 @@ typedef struct CUS_FIFO_Q_NODE
     INT16U user_define_deadline;
 }CUS_FIFO_Q_NODE;
 
-
+// For recordig the informations of CUS FIFO queue.
 typedef struct CUS_FIFO_Q_INFO
 {
     INT16U front;
@@ -819,7 +822,7 @@ typedef struct os_tcb {
 #ifdef M11102155_PA2_PART_2_CUS
     
     BOOLEAN server_or_not;      // 0 : general task, 1 : server.
-    INT16U server_size;         // recording the server size.
+    float server_size;         // recording the server size.
 
 #endif /* M11102155_PA2_PART_2_CUS */
 

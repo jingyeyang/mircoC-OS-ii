@@ -135,10 +135,7 @@ int  main (void)
     {
         CUSQInsert(cus_job_parameter[job_id].TaskID, cus_job_parameter[job_id].TaskArriveTime, cus_job_parameter[job_id].TaskExecutionTime, cus_job_parameter[job_id].JobDeadline);
     }
-    printf("donw insert CUS queue!!!\n");
-
-
-
+    printf("Done insert CUS queue!!!\n");
 
 #endif /* M11102155_PA2_PART_2_CUS */
 
@@ -231,7 +228,7 @@ int  main (void)
     {
         if (ptcb->server_or_not)
         {
-            printf(" Server        : TASK ID = %d, server size = %d percent\n", ptcb->OSTCBId, ptcb->server_size);
+            printf(" Server        : TASK ID = %d, server size = %f\n", ptcb->OSTCBId, ptcb->server_size);
         }
         else
         {
@@ -239,6 +236,8 @@ int  main (void)
         }
         ptcb = ptcb->OSTCBNext;
     }
+
+#ifdef M11102155_PA2_PART_2_CUS 
 
     printf("----- Aperiodic/Sporadic in CUS FIFO queue -----\n");
     int test_q_ptr = cus_fifo_q_info->end;
@@ -248,6 +247,8 @@ int  main (void)
         printf("  job id = %d, arrive time = %d, execution time = %d, user defined deadline = %d\n", cus_fifo_q[test_q_ptr].job_id, cus_fifo_q[test_q_ptr].arrive_time, cus_fifo_q[test_q_ptr].execution_time, cus_fifo_q[test_q_ptr].user_define_deadline);
         test_q_ptr++;
     }
+
+#endif /* M11102155_PA2_PART_2_CUS */
 
     printf("==========================================\n");
 
