@@ -856,6 +856,10 @@ void  OSIntExit (void)
                                 printf("ERROR : os_core.c ... EDF HEAP overflow !!!\n");
                             }
 
+                            OSPrioHighRdy = edf_heap[1].task_id;
+                            OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+
+
                             OS_EXIT_CRITICAL();
                         }
 
@@ -875,10 +879,20 @@ void  OSIntExit (void)
                             }
                             else
                             {
-                                printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
-                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
-                                fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
-                                    (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                if (OSTCBCur == OSTCBHighRdy)
+                                {
+                                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job + 1, OSTCBCur->response_time,
+                                        (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job + 1, OSTCBCur->response_time,
+                                        (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                }
+                                else
+                                {
+                                    printf("%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                        (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                    fprintf(Output_fp, "%2d\t Completion \t task(%2d)(%2d)   \t task(%2d)(%2d)        \t %2d \t %2d \t %2d  \n", OSTime, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBHighRdy->OSTCBId, OSTCBHighRdy->num_times_job, OSTCBCur->response_time,
+                                        (OSTCBCur->response_time - OSTCBCur->total_execute_time), OSTCBCur->OSTCBDly);
+                                }
                                 OSTCBCur->num_times_job++;
                             }
                         }
