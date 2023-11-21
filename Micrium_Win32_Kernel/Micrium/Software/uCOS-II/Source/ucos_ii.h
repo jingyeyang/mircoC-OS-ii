@@ -82,8 +82,8 @@ extern "C" {
 FILE* fp;
 
 #ifdef M11102155_PA2_PART_1_EDF
-#define INPUT_FILE_NAME "./EDF/TaskSet1.txt"
-//#define INPUT_FILE_NAME "./TaskSet.txt"
+//#define INPUT_FILE_NAME "./EDF/TaskSet3.txt"
+#define INPUT_FILE_NAME "./TaskSet.txt"
 #endif /* M11102155_PA2_PART_1_EDF */
 
 

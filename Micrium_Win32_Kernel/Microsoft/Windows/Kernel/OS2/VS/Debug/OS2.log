@@ -1,17 +1,18 @@
 ﻿  os_cpu_c.c
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c(627,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(728,52): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(733,52): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1102,40): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1106,40): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1227,13): warning C4013: 'exit' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2029,44): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2533,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2532,16): warning C4101: 'num_times_job': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2534,16): warning C4101: 'total_execute_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2536,16): warning C4101: 'deadline_time': unreferenced local variable
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2535,16): warning C4101: 'arrive_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(727,52): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(732,52): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(859,56): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1115,40): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1119,40): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1237,13): warning C4013: 'exit' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2039,44): warning C4244: '=': conversion from 'INT16U' to 'INT8U', possible loss of data
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2543,16): warning C4101: 'num_recent_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2542,16): warning C4101: 'num_times_job': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2544,16): warning C4101: 'total_execute_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2546,16): warning C4101: 'deadline_time': unreferenced local variable
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2545,16): warning C4101: 'arrive_time': unreferenced local variable
   os_dbg_r.c
   os_flag.c
   os_mbox.c
@@ -25,26 +26,8 @@ C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_t
   os_tmr.c
   app_hooks.c
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(145,27): warning C4013: 'atoi' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(183,16): error C2065: 'fifo_queue': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(183,27): warning C4013: 'malloc' undefined; assuming extern returning int
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(183,16): warning C4047: '=': 'int' differs in levels of indirection from 'INT16U *'
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(184,17): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(184,31): error C2065: 'FIFO_Q_INFO': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(184,32): error C2059: syntax error: ')'
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(186,20): error C2065: 'fifo_queue': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(186,20): warning C4047: '==': 'int' differs in levels of indirection from 'void *'
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(186,42): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(186,42): warning C4047: '==': 'int' differs in levels of indirection from 'void *'
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(186,49): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(194,16): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(194,18): error C2223: left of '->front' must point to struct/union
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(195,16): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(195,18): error C2223: left of '->end' must point to struct/union
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(196,16): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(196,18): error C2223: left of '->num_item' must point to struct/union
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(197,16): error C2065: 'fifo_q_info': undeclared identifier
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(197,18): error C2223: left of '->size' must point to struct/union
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(280,49): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(252,28): warning C4013: 'malloc' undefined; assuming extern returning int
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(255,49): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
   main.c
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(129,16): warning C4013: 'malloc' undefined; assuming extern returning int
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(129,14): warning C4047: '=': 'OS_STK **' differs in levels of indirection from 'int'
@@ -52,3 +35,4 @@ C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(192,29): warning C4244: 'function': conversion from 'INT16U' to 'INT8U', possible loss of data
 C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': unreferenced local variable
   Generating Code...
+  OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe
