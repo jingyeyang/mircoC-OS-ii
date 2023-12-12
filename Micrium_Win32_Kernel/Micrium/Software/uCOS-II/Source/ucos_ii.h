@@ -36,6 +36,8 @@
 //#define M11102155_PA1_PART_1
 #define M11102155_PA1_PART_2_RM
 //#define M11102155_PA1_PART_3_FIFO
+#define M11102155_PA3_PART_1_NPCS
+#define M11102155_PA3_PART_2_CPP
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,15 +70,29 @@ extern "C" {
 *********************************************************************************************************
 */
 
+#ifdef M11102155_PA3_PART_1_NPCS
+/* End time for the simulation */
+#define SYSTEM_END_TIME 100
+#else
 /* End time for the simulation */
 #define SYSTEM_END_TIME 30
+#endif /* M11102155_PA3_PART_1_NPCS */
 
 /* Input File */
 FILE* fp;
 
 #ifdef M11102155_PA1_PART_2_RM
+
+#ifdef M11102155_PA3_PART_1_NPCS
+
+#define INPUT_FILE_NAME "./NPCS/TaskSet 1/TaskSet.txt"
+//#define INPUT_FILE_NAME "./TaskSet.txt"
+
+#else
 //#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #define INPUT_FILE_NAME "./TaskSet.txt"
+#endif /* M11102155_PA3_PART_1_NPCS */
+
 #endif /* M11102155_PA1_PART_2_RM */
 
 #ifdef M11102155_PA1_PART_1
@@ -102,6 +118,14 @@ typedef struct task_para_set
     INT16U TaskPeriodic;
     INT16U TaskNumber;
     INT16U TaskPriority;
+
+#ifdef M11102155_PA3_PART_1_NPCS
+    INT16U R1_lock_period_time;
+    INT16U R1_unlock_period_time;
+    INT16U R2_lock_period_time;
+    INT16U R2_unlock_period_time;
+#endif /* M11102155_PA3_PART_1_NPCS */
+
 }task_para_set;
 
 int TASK_NUMBER;        // Number of the input tasks
@@ -713,6 +737,22 @@ typedef struct os_tcb {
             - arrive_time             = 24 (task 5's third time arrive time is at tick 24)
             - deadline_time           = 32 (task 5's forth time arrive time is at tick 24 + 8 = 32)
     */
+
+#ifdef M11102155_PA3_PART_1_NPCS
+
+    // Recording the period of each resource lock and unlock in each period, means how long will task request/release r1,r2 resources.
+    INT16U r1_lock_period_time;
+    INT16U r1_unlock_period_time;
+    INT16U r2_lock_period_time;
+    INT16U r2_unlock_period_time;
+
+    // Recording the current using resources in #jobs.
+    INT16U r1_current_lock_time;
+    INT16U r1_current_unlock_time;
+    INT16U r2_current_lock_time;
+    INT16U r2_current_unlock_time;
+
+#endif /* M11102155_PA3_PART_1_NPCS */
 
 #endif /* M11102155_PA1_PART_2_RM */
 

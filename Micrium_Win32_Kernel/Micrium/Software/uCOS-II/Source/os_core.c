@@ -2350,6 +2350,21 @@ INT8U  OS_TCBInit (INT8U    prio,
         INT16U arrive_time;                   // Records the arrival time of the task at time j.
         INT16U deadline_time;                 // Records the deadline of the task at time j.
 
+#ifdef M11102155_PA3_PART_1_NPCS
+        // Recording the period of each resource lock and unlock in each period, means how long will task request/release r1,r2 resources.
+        INT16U r1_lock_period_time;
+        INT16U r1_unlock_period_time;
+        INT16U r2_lock_period_time;
+        INT16U r2_unlock_period_time;
+
+        // Recording the current using resources in #jobs.
+        INT16U r1_current_lock_time;
+        INT16U r1_current_unlock_time;
+        INT16U r2_current_lock_time;
+        INT16U r2_current_unlock_time;
+
+#endif /* M11102155_PA3_PART_1_NPCS */
+
 
         if (p_arg != 0) // (void*) p_arg == 0 : Idle task.
         {
@@ -2359,6 +2374,24 @@ INT8U  OS_TCBInit (INT8U    prio,
             ptcb->arrive_time = task_parameter->TaskArriveTime;
             ptcb->period = task_parameter->TaskPeriodic;
             ptcb->deadline_time = (ptcb->arrive_time) + (ptcb->period);
+
+#ifdef M11102155_PA3_PART_1_NPCS
+
+            // update resources period record.
+            ptcb->r1_lock_period_time = task_parameter->R1_lock_period_time;
+            ptcb->r1_unlock_period_time = task_parameter->R1_unlock_period_time;
+            ptcb->r2_lock_period_time = task_parameter->R2_lock_period_time;
+            ptcb->r2_unlock_period_time = task_parameter->R2_unlock_period_time;
+
+            // update resource lock/unlock time of task's first job.
+            ptcb->r1_current_lock_time = ptcb->arrive_time + ptcb->r1_lock_period_time;
+            ptcb->r1_current_unlock_time = ptcb->arrive_time + ptcb->r1_unlock_period_time;
+
+            ptcb->r2_current_lock_time = ptcb->arrive_time + ptcb->r2_lock_period_time;
+            ptcb->r2_current_unlock_time = ptcb->arrive_time + ptcb->r2_unlock_period_time;
+
+#endif /* M11102155_PA3_PART_1_NPCS */
+
         }
 #endif /* M11102155_PA1_PART_2_RM */     
 
