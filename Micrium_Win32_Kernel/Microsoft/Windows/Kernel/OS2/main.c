@@ -169,6 +169,21 @@ int  main (void)
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
 
+
+
+    OS_TCB* ptr = OSTCBList;
+    while (ptr != NULL)
+    {
+
+        printf("TASK %d :: \n", ptr->OSTCBId);
+        printf("  r1 lock = %d  r1 unlock = %d  r2 lock = %d  r2 unlock = %d  \n", ptr->r1_current_lock_time, ptr->r1_current_unlock_time, ptr->r2_current_lock_time, ptr->r2_current_unlock_time);
+
+
+        ptr = ptr->OSTCBNext;
+    }
+
+
+
 #endif // M11102155_PA1_PART_2_RM
 
  
@@ -193,11 +208,13 @@ int  main (void)
     printf("Tick \t CurrentTask ID \t\t NextTask ID \t\t Number of ctx switches\n");
 #endif /* M11102155_HW1 */
 
-#ifdef M11102155_PA1_PART_2_RM
-    printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
-#endif /* M11102155_PA1_PART_2_RM */
+//#ifdef M11102155_PA1_PART_2_RM
+//    printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t PreemptionTime \t OSTimeDly\n");
+//#endif /* M11102155_PA1_PART_2_RM */
 
-
+#ifdef M11102155_PA3_PART_1_NPCS
+    printf("Tick \t  Event \t CurrentTask ID \t NextTask ID \t ResponseTime \t BlockingTime \t PreemptionTime \t ResourceName\n");
+#endif /* M11102155_PA3_PART_1_NPCS */
 
 
 
@@ -208,6 +225,7 @@ int  main (void)
         ;
     }
 }
+
 
 
 /*
@@ -237,7 +255,7 @@ static void task(void* p_arg)
     {
         // For every task keep executing unitl finish or preemptive
         while (OSTCBCur->num_recent_execute_time < OSTCBCur->total_execute_time);    // TimeTick interrupt happen before while loop end !!!
-       
+
         OSTimeDly(0);
     }
 }

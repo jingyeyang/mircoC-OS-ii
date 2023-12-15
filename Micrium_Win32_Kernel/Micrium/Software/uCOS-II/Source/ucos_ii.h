@@ -84,10 +84,8 @@ FILE* fp;
 #ifdef M11102155_PA1_PART_2_RM
 
 #ifdef M11102155_PA3_PART_1_NPCS
-
-#define INPUT_FILE_NAME "./NPCS/TaskSet 1/TaskSet.txt"
-//#define INPUT_FILE_NAME "./TaskSet.txt"
-
+//#define INPUT_FILE_NAME "./NPCS/TaskSet 1/TaskSet.txt"
+#define INPUT_FILE_NAME "./TaskSet.txt"
 #else
 //#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #define INPUT_FILE_NAME "./TaskSet.txt"
@@ -101,7 +99,7 @@ FILE* fp;
 
 #define OUTPUT_FILE_NAME "./Output.txt"
 #define MAX 20      // Task maximum number
-#define INFO 4      // information of task
+#define INFO 10      // information of task
 /* Input File */
 
 /* Output File */
@@ -751,6 +749,13 @@ typedef struct os_tcb {
     INT16U r1_current_unlock_time;
     INT16U r2_current_lock_time;
     INT16U r2_current_unlock_time;
+
+    // Recording the experiment.
+    INT16U blocking_time;
+
+    // Consider whether the task is holding resource or not.
+    int holding_r1;       // 0 : non resource, 1 : holding the resource.
+    int holding_r2;
 
 #endif /* M11102155_PA3_PART_1_NPCS */
 

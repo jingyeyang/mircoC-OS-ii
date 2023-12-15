@@ -144,7 +144,7 @@ void InputFile()
         {
             TaskInfo[i] = atoi(ptr);
             ptr = strtok_s(NULL, " ", &pTmp);
-            /* printf("Info : %d\n", task_info[i]); */
+            //printf("Info : %d\n", TaskInfo[i]);
             if (i == 0)
             {
                 TASK_NUMBER++;

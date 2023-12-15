@@ -1,19 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Micrium_Win32_Kernel",
-    "\\Micrium_Win32_Kernel\\Micrium",
-    "\\Micrium_Win32_Kernel\\Micrium\\Software",
-    "\\Micrium_Win32_Kernel\\Micrium\\Software\\uCOS-II",
-    "\\Micrium_Win32_Kernel\\Micrium\\Software\\uCOS-II\\Ports",
-    "\\Micrium_Win32_Kernel\\Micrium\\Software\\uCOS-II\\Ports\\Win32",
-    "\\Micrium_Win32_Kernel\\Micrium\\Software\\uCOS-II\\Ports\\Win32\\Visual Studio",
-    "\\Micrium_Win32_Kernel\\Microsoft",
-    "\\Micrium_Win32_Kernel\\Microsoft\\Windows",
-    "\\Micrium_Win32_Kernel\\Microsoft\\Windows\\Kernel",
-    "\\Micrium_Win32_Kernel\\Microsoft\\Windows\\Kernel\\OS2",
-    "\\Micrium_Win32_Kernel\\Microsoft\\Windows\\Kernel\\OS2\\VS"
+    ""
   ],
-  "SelectedNode": "\\Micrium_Win32_Kernel\\Microsoft\\Windows\\Kernel\\OS2\\VS\\OS2.sln",
+  "SelectedNode": "\\OS2.sln",
   "PreviewInSolutionExplorer": false
 }

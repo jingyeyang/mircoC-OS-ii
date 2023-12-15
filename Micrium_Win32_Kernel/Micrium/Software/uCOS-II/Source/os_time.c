@@ -64,8 +64,16 @@ void  OSTimeDly (INT32U ticks)
     OS_ENTER_CRITICAL();
     ticks = OSTCBCur->deadline_time - OSTime;
     OSTCBCur->response_time = OSTime - OSTCBCur->arrive_time;
+
+//#ifdef M11102155_PA3_PART_1_NPCS
+//
+//    
+//
+//#endif /* M11102155_PA3_PART_1_NPCS */
+
     OS_EXIT_CRITICAL();
 #endif /* M11102155_PA1_PART_2_RM */
+
 
 
 
