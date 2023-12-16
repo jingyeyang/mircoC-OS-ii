@@ -707,14 +707,21 @@ void  OSIntExit (void)
             if (OSLockNesting == 0u) {                     /* ... and not locked.                      */
                 OS_SchedNew();
 
-#ifdef M11102155_PA3_PART_1_NPCS
+//#ifdef M11102155_PA3_PART_1_NPCS
+////#ifndef M11101255_PA3_PART_2_CPP
+//                if((OSTCBCur -> holding_r1 == 0) && (OSTCBCur->holding_r2 == 0))
+//                {
+////#endif /* M11101255_PA3_PART_2_CPP */
+//#endif /* M11102155_PA3_PART_1_NPCS */
 
-                if((OSTCBCur -> holding_r1 == 0) && (OSTCBCur->holding_r2 == 0))
-                {
-#endif /* M11102155_PA3_PART_1_NPCS */
 
 
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
+#ifndef M11102155_PA3_PART_2_CPP
+                OSPrioCur = OSTCBCur->OSTCBPrio;
+                //printf("OSPrioHighRdy = %d , OSPrioCur = %d\n", OSPrioHighRdy, OSPrioCur);
+#endif /* M11102155_PA3_PART_2_CPP */
+
                 if (OSPrioHighRdy != OSPrioCur) {          /* No Ctx Sw if current task is highest rdy */
 
 #ifndef M11102155_HW1
@@ -807,9 +814,9 @@ void  OSIntExit (void)
 
 
 
-#ifdef M11102155_PA3_PART_1_NPCS
-                }
-#endif /* M11102155_PA3_PART_1_NPCS */
+//#ifdef M11102155_PA3_PART_1_NPCS
+//                }
+//#endif /* M11102155_PA3_PART_1_NPCS */
 
 
 
@@ -1078,7 +1085,7 @@ void  OSTimeTick (void)
 #ifdef M11102155_PA1_PART_2_RM
     // At each end of tick add number of tick that a task execute.
     OSTCBCur->num_recent_execute_time++;
-    //printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
+    printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
 #endif /* M11102155_PA1_PART_2_RM */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
@@ -1110,58 +1117,80 @@ void  OSTimeTick (void)
         if (OSTime == (OSTCBCur->r1_current_lock_time + OSTCBCur -> blocking_time - 1))
         {
             OSTCBCur->holding_r1 = 1;
-            printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
-            fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+            if (OSTCBCur->OSTCBPrio > r1_ceiling)
+            {
+                printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r1_ceiling);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+           
+                OSTaskChangePrio(OSTCBCur->original_prio, r1_ceiling);
+    
+                printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
+
+            }
+            else
+            {
+                printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+
+            }
         }
         if (OSTime == (OSTCBCur->r2_current_lock_time + OSTCBCur->blocking_time - 1))
         {
             OSTCBCur->holding_r2 = 1;
-            printf("%2d\t LockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
-            fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+            if (OSTCBCur->OSTCBPrio > r2_ceiling)
+            {
+                printf("%2d\t LockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r2_ceiling);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+                OSTaskChangePrio(OSTCBCur->original_prio, r2_ceiling);
+                printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
+            }
+            else
+            {
+                printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+            }
         }
 
         if (OSTime == (OSTCBCur->r1_current_unlock_time + OSTCBCur -> blocking_time - 1))
         {
             OSTCBCur->holding_r1 = 0;
-            printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
-            fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+            if (OSTCBCur->holding_r2)
+            {
+                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+                OSTaskChangePrio(r1_ceiling, r2_ceiling);
+            }
+            else
+            {
+                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r1_ceiling, OSTCBCur->original_prio);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+                OSTaskChangePrio(r1_ceiling, OSTCBCur->original_prio);
+            }
         }
         if (OSTime == (OSTCBCur->r2_current_unlock_time + OSTCBCur -> blocking_time - 1))
         {
             OSTCBCur->holding_r2 = 0;
-            printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
-            fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+
+            if (OSTCBCur->holding_r1)
+            {
+                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                OSTaskChangePrio(r2_ceiling, r1_ceiling);
+            }
+            else
+            {
+                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r2_ceiling, OSTCBCur->original_prio);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                OSTaskChangePrio(r2_ceiling, OSTCBCur->original_prio);
+            }
         }
     }
-    //OS_TCB* ptr = OSTCBList;
-    //while (ptr != NULL)
-    //{
-    //    if (ptr->OSTCBPrio != 63)
-    //    {
-    //        if (OSTime == ptr->r1_current_lock_time)
-    //        {
-    //            ptr->holding_r1 = 1;
-    //            printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \n", OSTime, ptr->OSTCBId, ptr->num_times_job);
-    //        }
-    //        if (OSTime == ptr->r2_current_lock_time)
-    //        {
-    //            ptr->holding_r2 = 1;
-    //            printf("%2d\t LockResource \t task(%2d)(%2d)   \t R2 \n", OSTime, ptr->OSTCBId, ptr->num_times_job);
-    //        }
-
-    //        if (OSTime == ptr->r1_current_unlock_time)
-    //        {
-    //            ptr->holding_r1 = 0;
-    //            printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime, ptr->OSTCBId, ptr->num_times_job);
-    //        }
-    //        if (OSTime == ptr->r2_current_unlock_time)
-    //        {
-    //            ptr->holding_r2 = 0;
-    //            printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime, ptr->OSTCBId, ptr->num_times_job);
-    //        }
-    //    }
-    //    ptr = ptr->OSTCBNext;
-    //}
 
 #endif /* M11102155_PA3_PART_1_NPCS */
 
@@ -2486,6 +2515,9 @@ INT8U  OS_TCBInit (INT8U    prio,
         int holding_r1;       // 0 : non resource, 1 : holding the resource.
         int holding_r2;
 
+#ifdef M11102155_PA3_PART_2_CPP
+        INT8U original_prio;
+#endif /* M11102155_PA3_PART_2_CPP */
 
 
 #endif /* M11102155_PA3_PART_1_NPCS */
@@ -2523,6 +2555,10 @@ INT8U  OS_TCBInit (INT8U    prio,
             ptcb->holding_r1 = 0;
             ptcb->holding_r2 = 0;
 
+#ifdef M11102155_PA3_PART_2_CPP
+            // initial original prio for CPP.
+            ptcb->original_prio = ptcb->OSTCBPrio;
+#endif /* M11102155_PA3_PART_2_CPP */
 
 #endif /* M11102155_PA3_PART_1_NPCS */
 

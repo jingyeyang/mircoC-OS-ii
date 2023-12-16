@@ -50,7 +50,7 @@
 #define OS_TICK_STEP_EN           1u   /* Enable tick stepping feature for uC/OS-View                  */
 
 #ifdef M11102155_PA3_PART_1_NPCS
-#define OS_TICKS_PER_SEC          100u   /* Set the number of ticks in one second                        */
+#define OS_TICKS_PER_SEC          1u   /* Set the number of ticks in one second                        */
 #else
 #define OS_TICKS_PER_SEC          1u
 #endif /* M11102155_PA3_PART_1_NPCS */

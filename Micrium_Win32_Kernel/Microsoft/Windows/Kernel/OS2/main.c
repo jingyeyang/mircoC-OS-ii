@@ -156,6 +156,8 @@ int  main (void)
 
 #ifdef M11102155_PA1_PART_2_RM
 
+
+#ifndef M11102155_PA3_PART_2_CPP
     for (n = 0; n < TASK_NUMBER; n++)
     {
         OSTaskCreateExt(task,
@@ -168,6 +170,51 @@ int  main (void)
             &TaskParameter[0],
             (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
     }
+#else
+    for (n = 0; n < TASK_NUMBER; n++)
+    {
+        OSTaskCreateExt(task,
+            &TaskParameter[n],
+            &Task_STK[n][TASK_STAKSIZE - 1],
+            (3 * (n + 1)),
+            TaskParameter[n].TaskID,
+            &Task_STK[n][0],
+            TASK_STAKSIZE,
+            &TaskParameter[0],
+            (OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR));
+    }
+
+    // check the resource ceiling.
+    OS_TCB* check_ceiling = OSTCBList;
+    r1_ceiling = 255;
+    r2_ceiling = 255;
+    while (check_ceiling != NULL)
+    {
+        // task using resource 1.
+        if (check_ceiling->r1_lock_period_time != 0)
+        {
+            if (check_ceiling->OSTCBPrio < r1_ceiling)
+            {
+                r1_ceiling = check_ceiling->OSTCBPrio - 1;
+            }
+        }
+
+        // task using resource 1.
+        if (check_ceiling->r2_lock_period_time != 0)
+        {
+            if (check_ceiling->OSTCBPrio < r2_ceiling)
+            {
+                r2_ceiling = check_ceiling->OSTCBPrio - 2;
+            }
+        }
+        check_ceiling = check_ceiling->OSTCBNext;
+    }
+
+    printf("R1 ceiling = %d , R2 ceiling = %d \n", r1_ceiling, r2_ceiling);
+
+
+
+#endif /* M11102155_PA3_PART_2_CPP */
 
 
 
@@ -175,7 +222,7 @@ int  main (void)
     while (ptr != NULL)
     {
 
-        printf("TASK %d :: \n", ptr->OSTCBId);
+        printf("TASK %d ::  prio = %d\n", ptr->OSTCBId, ptr->OSTCBPrio);
         printf("  r1 lock = %d  r1 unlock = %d  r2 lock = %d  r2 unlock = %d  \n", ptr->r1_current_lock_time, ptr->r1_current_unlock_time, ptr->r2_current_lock_time, ptr->r2_current_unlock_time);
 
 

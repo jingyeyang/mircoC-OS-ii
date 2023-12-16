@@ -84,8 +84,9 @@ FILE* fp;
 #ifdef M11102155_PA1_PART_2_RM
 
 #ifdef M11102155_PA3_PART_1_NPCS
+#define INPUT_FILE_NAME "./CPP/TaskSet 1/TaskSet.txt"
 //#define INPUT_FILE_NAME "./NPCS/TaskSet 1/TaskSet.txt"
-#define INPUT_FILE_NAME "./TaskSet.txt"
+//#define INPUT_FILE_NAME "./TaskSet.txt"
 #else
 //#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #define INPUT_FILE_NAME "./TaskSet.txt"
@@ -134,6 +135,16 @@ OS_STK** Task_STK;
 
 /* Create Task */
 task_para_set TaskParameter[OS_MAX_TASKS];
+
+
+
+#ifdef M11102155_PA3_PART_2_CPP
+
+// Recording the resource ceiling of the CPP.
+int r1_ceiling;
+int r2_ceiling;
+
+#endif /* M11102155_PA3_PART_2_CPP */
 
 
 #ifdef   OS_GLOBALS
@@ -756,6 +767,12 @@ typedef struct os_tcb {
     // Consider whether the task is holding resource or not.
     int holding_r1;       // 0 : non resource, 1 : holding the resource.
     int holding_r2;
+
+#ifdef M11102155_PA3_PART_2_CPP
+    // Consider original prioirty in CPP
+    INT8U original_prio;
+    
+#endif /* M11102155_PA3_PART_2_CPP */
 
 #endif /* M11102155_PA3_PART_1_NPCS */
 
