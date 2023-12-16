@@ -84,9 +84,9 @@ FILE* fp;
 #ifdef M11102155_PA1_PART_2_RM
 
 #ifdef M11102155_PA3_PART_1_NPCS
-#define INPUT_FILE_NAME "./CPP/TaskSet 1/TaskSet.txt"
+//#define INPUT_FILE_NAME "./CPP/TaskSet 1/TaskSet.txt"
 //#define INPUT_FILE_NAME "./NPCS/TaskSet 1/TaskSet.txt"
-//#define INPUT_FILE_NAME "./TaskSet.txt"
+#define INPUT_FILE_NAME "./TaskSet.txt"
 #else
 //#define INPUT_FILE_NAME "./RM/Task Set 3/TaskSet.txt"
 #define INPUT_FILE_NAME "./TaskSet.txt"

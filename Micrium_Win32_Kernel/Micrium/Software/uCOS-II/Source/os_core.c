@@ -708,16 +708,16 @@ void  OSIntExit (void)
                 OS_SchedNew();
 
 //#ifdef M11102155_PA3_PART_1_NPCS
-////#ifndef M11101255_PA3_PART_2_CPP
+//#ifndef M11102155_PA3_PART_2_CPP
 //                if((OSTCBCur -> holding_r1 == 0) && (OSTCBCur->holding_r2 == 0))
 //                {
-////#endif /* M11101255_PA3_PART_2_CPP */
+//#endif /* M11102155_PA3_PART_2_CPP */
 //#endif /* M11102155_PA3_PART_1_NPCS */
 
 
 
                 OSTCBHighRdy = OSTCBPrioTbl[OSPrioHighRdy];
-#ifndef M11102155_PA3_PART_2_CPP
+#ifdef M11102155_PA3_PART_2_CPP
                 OSPrioCur = OSTCBCur->OSTCBPrio;
                 //printf("OSPrioHighRdy = %d , OSPrioCur = %d\n", OSPrioHighRdy, OSPrioCur);
 #endif /* M11102155_PA3_PART_2_CPP */
@@ -1085,7 +1085,7 @@ void  OSTimeTick (void)
 #ifdef M11102155_PA1_PART_2_RM
     // At each end of tick add number of tick that a task execute.
     OSTCBCur->num_recent_execute_time++;
-    printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
+    //printf("Tick %d : TASK %d\n", OSTime, OSTCBCur->OSTCBId);
 #endif /* M11102155_PA1_PART_2_RM */
 
 #if OS_TIME_TICK_HOOK_EN > 0u
@@ -1093,7 +1093,7 @@ void  OSTimeTick (void)
 #endif
 
 
-#ifdef M11102155_PA3_PART_1_NPCS
+#ifdef M11102155_PA3_PART_2_CPP
 
     //printf("TICK %d :: \n", OSTime);
 
@@ -1101,8 +1101,9 @@ void  OSTimeTick (void)
     OS_TCB* ptr = OSTCBList;
     while (ptr != NULL)
     {
-        if ((OSTime >= ptr->arrive_time) && (ptr != OSTCBCur) && (ptr->OSTCBPrio < OSTCBCur->OSTCBPrio))
+        if ((OSTime >= ptr->arrive_time) && (ptr != OSTCBCur) && (ptr->original_prio < OSTCBCur->original_prio))
         {
+
             ptr->blocking_time++;
         }
 
@@ -1111,21 +1112,23 @@ void  OSTimeTick (void)
         ptr = ptr->OSTCBNext;
     }
 
-
+    //(OSTCBCur->response_time - OSTCBCur->total_execute_time - OSTCBCur->blocking_time)
     if (OSTCBCur->OSTCBPrio != 63)
     {
-        if (OSTime == (OSTCBCur->r1_current_lock_time + OSTCBCur -> blocking_time - 1))
+        INT16U preemption_time_temp = OSTime - OSTCBCur->arrive_time - OSTCBCur->num_recent_execute_time + 1;
+        // get r1
+        if (OSTime == (OSTCBCur->r1_current_lock_time + preemption_time_temp - 1))
         {
             OSTCBCur->holding_r1 = 1;
 
             if (OSTCBCur->OSTCBPrio > r1_ceiling)
             {
                 printf("%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r1_ceiling);
-                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r1_ceiling);
            
                 OSTaskChangePrio(OSTCBCur->original_prio, r1_ceiling);
     
-                printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
+                //printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
 
             }
             else
@@ -1135,17 +1138,18 @@ void  OSTimeTick (void)
 
             }
         }
-        if (OSTime == (OSTCBCur->r2_current_lock_time + OSTCBCur->blocking_time - 1))
+        // get r2
+        if (OSTime == (OSTCBCur->r2_current_lock_time + preemption_time_temp - 1))
         {
             OSTCBCur->holding_r2 = 1;
 
             if (OSTCBCur->OSTCBPrio > r2_ceiling)
             {
                 printf("%2d\t LockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r2_ceiling);
-                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, r2_ceiling);
 
                 OSTaskChangePrio(OSTCBCur->original_prio, r2_ceiling);
-                printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
+                //printf("task %d change prio from %d to %d\n", OSTCBCur->OSTCBId, OSTCBCur->original_prio, OSTCBCur->OSTCBPrio);
             }
             else
             {
@@ -1153,46 +1157,47 @@ void  OSTimeTick (void)
                 fprintf(Output_fp, "%2d\t LockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
             }
         }
-
-        if (OSTime == (OSTCBCur->r1_current_unlock_time + OSTCBCur -> blocking_time - 1))
+        // release r1
+        if (OSTime == (OSTCBCur->r1_current_unlock_time + preemption_time_temp - 1))
         {
             OSTCBCur->holding_r1 = 0;
 
             if (OSTCBCur->holding_r2)
             {
                 printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
-                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
 
-                OSTaskChangePrio(r1_ceiling, r2_ceiling);
+                OSTaskChangePrio(OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
             }
             else
             {
                 printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r1_ceiling, OSTCBCur->original_prio);
-                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R1 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r1_ceiling, OSTCBCur->original_prio);
 
                 OSTaskChangePrio(r1_ceiling, OSTCBCur->original_prio);
             }
         }
-        if (OSTime == (OSTCBCur->r2_current_unlock_time + OSTCBCur -> blocking_time - 1))
+        // release r1
+        if (OSTime == (OSTCBCur->r2_current_unlock_time + preemption_time_temp - 1))
         {
             OSTCBCur->holding_r2 = 0;
 
             if (OSTCBCur->holding_r1)
             {
-                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, OSTCBCur->OSTCBPrio, OSTCBCur->OSTCBPrio);
-                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r2_ceiling, r1_ceiling);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r2_ceiling, r1_ceiling);
                 OSTaskChangePrio(r2_ceiling, r1_ceiling);
             }
             else
             {
                 printf("%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r2_ceiling, OSTCBCur->original_prio);
-                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job);
+                fprintf(Output_fp, "%2d\t UnlockResource \t task(%2d)(%2d)   \t R2 \t %d to %d \n", OSTime + 1, OSTCBCur->OSTCBId, OSTCBCur->num_times_job, r2_ceiling, OSTCBCur->original_prio);
                 OSTaskChangePrio(r2_ceiling, OSTCBCur->original_prio);
             }
         }
     }
 
-#endif /* M11102155_PA3_PART_1_NPCS */
+#endif /* M11102155_PA3_PART_2_CPP */
 
 
 

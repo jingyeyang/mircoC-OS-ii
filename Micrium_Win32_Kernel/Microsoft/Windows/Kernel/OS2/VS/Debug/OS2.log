@@ -1,20 +1,40 @@
-﻿  os_core.c
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1249,13): warning C4013: 'exit' 未定義; 假設 extern 傳回整數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2529,16): warning C4101: 'r1_lock_period_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2522,16): warning C4101: 'num_recent_execute_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2536,16): warning C4101: 'r1_current_unlock_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2544,13): warning C4101: 'holding_r1': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2531,16): warning C4101: 'r2_lock_period_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2521,16): warning C4101: 'num_times_job': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2530,16): warning C4101: 'r1_unlock_period_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2523,16): warning C4101: 'total_execute_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2545,13): warning C4101: 'holding_r2': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2525,16): warning C4101: 'deadline_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2541,16): warning C4101: 'blocking_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2538,16): warning C4101: 'r2_current_unlock_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2548,15): warning C4101: 'original_prio': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2537,16): warning C4101: 'r2_current_lock_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2535,16): warning C4101: 'r1_current_lock_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2532,16): warning C4101: 'r2_unlock_period_time': 未參考的區域變數
-C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2524,16): warning C4101: 'arrive_time': 未參考的區域變數
+﻿  os_cpu_c.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Ports\Win32\Visual Studio\os_cpu_c.c(627,1): warning C4067: 未預期的語彙基元，接著前置處理器指示詞 - 必須是新行
+  os_core.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(1225,13): warning C4013: 'exit' 未定義; 假設 extern 傳回整數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2505,16): warning C4101: 'r1_lock_period_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2498,16): warning C4101: 'num_recent_execute_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2512,16): warning C4101: 'r1_current_unlock_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2520,13): warning C4101: 'holding_r1': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2507,16): warning C4101: 'r2_lock_period_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2497,16): warning C4101: 'num_times_job': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2506,16): warning C4101: 'r1_unlock_period_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2499,16): warning C4101: 'total_execute_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2521,13): warning C4101: 'holding_r2': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2501,16): warning C4101: 'deadline_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2517,16): warning C4101: 'blocking_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2514,16): warning C4101: 'r2_current_unlock_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2524,15): warning C4101: 'original_prio': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2513,16): warning C4101: 'r2_current_lock_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2511,16): warning C4101: 'r1_current_lock_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2508,16): warning C4101: 'r2_unlock_period_time': 未參考的區域變數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Micrium\Software\uCOS-II\Source\os_core.c(2500,16): warning C4101: 'arrive_time': 未參考的區域變數
+  os_dbg_r.c
+  os_flag.c
+  os_mbox.c
+  os_mem.c
+  os_mutex.c
+  os_q.c
+  os_sem.c
+  os_task.c
+  os_time.c
+  os_tmr.c
+  app_hooks.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\app_hooks.c(145,27): warning C4013: 'atoi' 未定義; 假設 extern 傳回整數
+  main.c
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(120,16): warning C4013: 'malloc' 未定義; 假設 extern 傳回整數
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(120,14): warning C4047: '=': 'OS_STK **' 與 'int' 間接取值的層級不同
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(126,21): warning C4047: '=': 'OS_STK *' 與 'int' 間接取值的層級不同
+C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\main.c(99,17): warning C4101: 'os_err': 未參考的區域變數
+  正在產生程式碼...
   OS2.vcxproj -> C:\github\mircoC-OS-ii\Micrium_Win32_Kernel\Microsoft\Windows\Kernel\OS2\VS\Debug\OS2.exe
